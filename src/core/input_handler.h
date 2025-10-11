@@ -9,12 +9,14 @@ public:
 	void Update();
 	bool GetKey(int key_code) const;
 	
+	float GetDeltaTime() { return m_delta_time; }
+
 	bool m_quit;
-	float m_delta_time;
 
 private:
 	void CalculateDeltaTime();
 	
+	float m_delta_time;
 	float m_current_time;
 	float m_last_time;
 
