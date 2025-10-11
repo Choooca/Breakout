@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(
-	Larian_BrickBreaker
+	Breakout
 	LANGUAGES CXX C
 )
 

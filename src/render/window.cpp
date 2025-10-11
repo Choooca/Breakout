@@ -8,7 +8,7 @@ Window::Window(int window_width, int window_height)
 {
 	SDL_Init(SDL_INIT_VIDEO);
 
-	m_window = SDL_CreateWindow("Brick Breaker", window_width, window_height, SDL_WINDOW_OPENGL);
+	m_window = SDL_CreateWindow("Breakout", window_width, window_height, SDL_WINDOW_OPENGL);
 
 	m_renderer = SDL_CreateRenderer(m_window, NULL);
 }
