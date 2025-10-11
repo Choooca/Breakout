@@ -2,21 +2,22 @@
 #include <core/input_handler.h>
 #include <core/game.h>
 #include <memory>
+#include <entity/entity.h>
 
-class Paddle {
+class Paddle : public Entity {
 public:
 	Paddle(int screen_width, int screen_height);
 
-	void Update(const Game &game);
+	void Update(const Game &game) override;
+
+protected:
+
+	void Render(const std::unique_ptr<Window> & window) override;
+
 private:
-	float m_position_x;
-	float m_position_y;
 
-	int m_size_x = 150;
-	int m_size_y = 30;
-
-	float m_speed = 300;
+	float m_speed;
 
 	void Input(const std::unique_ptr<InputHandler> & input_handler, const std::unique_ptr<Window> &window);
-	void Render(const std::unique_ptr<Window> & window);
+
 };
