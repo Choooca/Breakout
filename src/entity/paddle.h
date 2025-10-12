@@ -6,13 +6,9 @@
 
 class Paddle : public Entity {
 public:
-	Paddle(int screen_width, int screen_height);
+	Paddle(float position_x, float position_y, float width, float height, Color color);
 
 	void Update(const Game &game) override;
-
-protected:
-
-	void Render(const std::unique_ptr<Window> & window) override;
 
 private:
 

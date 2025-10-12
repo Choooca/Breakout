@@ -4,15 +4,14 @@
 class Ball : public Entity {
 public:
 
-	Ball(int screen_width, int screen_height);
+	Ball(float position_x, float position_y, float width, float height, Color color = {255, 255, 255, 255});
 
 	void Update(const Game& game) override;
-
-protected:
-
-	void Render(const std::unique_ptr<Window>& window) override;
 
 private:
 
 	float m_speed;
+
+	float m_dir_x;
+	float m_dir_y;
 };
