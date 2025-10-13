@@ -5,7 +5,8 @@ Entity::Entity(float position_x, float position_y, float width, float height, Co
 	  m_position_y(position_y),
 	  m_width(width),
 	  m_height(height),
-	  m_color(color){}
+	  m_color(color),
+	  m_should_be_free(false){}
 
 void Entity::SetColor(Color color) {
 	m_color = color;

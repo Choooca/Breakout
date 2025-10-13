@@ -12,18 +12,18 @@ std::shared_ptr<Entity> EntityFactory::CreateEntity(ENTITIES entity_type, float 
 	switch (entity_type)
 	{
 	case PADDLE:
-		all_entities.push_back(std::make_shared<Paddle>(position_x, position_y, width, height, color));
+		m_all_entities.push_back(std::make_shared<Paddle>(position_x, position_y, width, height, color));
 		break;
 	case BALL:
-		all_entities.push_back(std::make_shared<Ball>(position_x, position_y, width, height, color));
+		m_all_entities.push_back(std::make_shared<Ball>(position_x, position_y, width, height, color));
 		break;
 	case BRICK:
-		all_entities.push_back(std::make_shared<Brick>(position_x, position_y, width, height, color));
+		m_all_entities.push_back(std::make_shared<Brick>(position_x, position_y, width, height, color));
 		break;
 	default:
 		break;
 	}
 
-	return all_entities.back();
+	return m_all_entities.back();
 
 }

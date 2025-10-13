@@ -21,10 +21,17 @@ AABB MinkowskiDifference(const AABB a, const AABB b) {
 	return ret;
 }
 
-bool AABBCollideAABB(const AABB a, const AABB b) {
+Hit AABBCollideAABB(const AABB a, const AABB b) {
+	Hit ret = { false, {0,0} };
+
 	AABB minkownski_aabb = MinkowskiDifference(a, b);
 
-	return PointCollideAABB({ 0, 0 }, minkownski_aabb);
+	if (!PointCollideAABB({ 0, 0 }, minkownski_aabb)) return ret;
+
+	ret.is_hit = true;
+	ret.penetration_vector = AABBPenetrationVector(minkownski_aabb);
+
+	return ret;
 }
 
 Vector2 AABBPenetrationVector(AABB aabb) {

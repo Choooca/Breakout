@@ -1,5 +1,7 @@
 #include "ball.h"
 #include <algorithm>
+#include <iostream>
+#include <utility/aabb_utility.h>
 
 Ball::Ball(float position_x, float position_y, float width, float height, Color color)
 	: Entity(position_x, position_y, width, height, color),
@@ -38,3 +40,9 @@ void Ball::Update(const Game& game) {
 	}
 }
 
+void Ball::OnHit(Hit hit_result) { 
+	m_position_x -= hit_result.penetration_vector.m_x;
+	m_position_y -= hit_result.penetration_vector.m_y;
+	if (hit_result.penetration_vector.m_y == 0.0f) m_dir_x *= -1;
+	else m_dir_y *= -1;
+}

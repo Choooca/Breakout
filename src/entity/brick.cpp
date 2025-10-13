@@ -4,3 +4,7 @@ Brick::Brick(float position_x, float position_y, float width, float height, Colo
 	: Entity(position_x, position_y, width, height, color){ }
 
 void Brick::Update(const Game& game) {}
+
+void Brick::OnHit(Hit hit_result) {
+	m_should_be_free = true;
+}

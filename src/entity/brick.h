@@ -7,4 +7,5 @@ public:
 	Brick(float position_x, float position_y, float width, float height, Color color);
 
 	void Update(const Game& game) override;
+	void OnHit(Hit hit_result) override;
 };
