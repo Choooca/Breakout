@@ -18,7 +18,7 @@ int EntityFactory::CreateEntity(ENTITIES entity_type, float position_x, float po
 		break;
 	}
 	case BALL:{
-		std::shared_ptr<Ball> ball = std::make_shared<Ball>(position_x, position_y, width, height, color, "", 300.0f);
+		std::shared_ptr<Ball> ball = std::make_shared<Ball>(position_x, position_y, width, height, color, "", 500.0f);
 		m_all_entities.push_back(ball);
 		m_moving_entities.push_back(ball);
 		break;

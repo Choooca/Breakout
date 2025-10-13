@@ -29,3 +29,13 @@ void Entity::Render(const std::unique_ptr<Window>& window) {
 	SDL_FRect paddle_rect = { m_position_x - m_width * .5f, m_position_y - m_height * .5f, m_width, m_height };
 	SDL_RenderFillRect(window->GetRenderer(), &paddle_rect);
 }
+
+void Entity::ModifyBallDirection(float& dir_x, float& dir_y, const Hit& hit_result) {
+
+	Vector2 normal = hit_result.normal;
+
+	float dot = dir_x * normal.m_x + dir_y * normal.m_y;
+
+	dir_x = dir_x - 2.0f * dot * normal.m_x;
+	dir_y = dir_y - 2.0f * dot * normal.m_y;
+}

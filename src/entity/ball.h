@@ -5,7 +5,6 @@
 
 class Ball : public MovingEntity {
 public:
-
 	Ball(float position_x, float position_y, float width, float height, Color color, std::string name, float speed);
 
 	void Update(const Game& game) override;
@@ -15,4 +14,6 @@ private:
 
 	float m_dir_x;
 	float m_dir_y;
+
+	void ReflectVector(float &vec_x, float &vec_y, float normal_x, float normal_y);
 };

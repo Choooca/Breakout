@@ -37,6 +37,8 @@ public:
 
 	virtual void OnHit(Hit hit_result, std::weak_ptr<Entity> other_entity) {};
 
+	virtual void ModifyBallDirection(float &dir_x, float &dir_y, const Hit& hit_result);
+
 	bool m_should_be_free;
 
 	std::string m_name;
