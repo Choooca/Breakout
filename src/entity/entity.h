@@ -2,6 +2,7 @@
 #include <memory>
 #include <core/game.h>
 #include <render/window.h>
+#include <vector>
 
 struct Color {
 	float Red;
@@ -18,8 +19,15 @@ public:
 	void SetPosition(float x, float y);
 	void SetSize(float width, float height);
 
+	inline float GetXPos() const { return m_position_x; };
+	inline float GetYPos() const { return m_position_y; };
+	inline float GetWidth() const { return m_width; };
+	inline float GetHeight() const { return m_height; };
+
 	virtual void Update(const Game& game) = 0;
 	virtual void Render(const std::unique_ptr<Window>& window);
+
+	virtual void OnHit() {};
 
 protected:
 	float m_position_x;

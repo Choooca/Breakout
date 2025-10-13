@@ -5,9 +5,11 @@ Ball::Ball(float position_x, float position_y, float width, float height, Color 
 	: Entity(position_x, position_y, width, height, color),
 	  m_speed(300),
 	  m_dir_x(1),
-	  m_dir_y(-1){ }
+	  m_dir_y(-1)
+	  { }
 
 void Ball::Update(const Game& game) {
+
 	m_position_x += game.m_input_handler->GetDeltaTime() * m_speed * m_dir_x;
 	m_position_y += game.m_input_handler->GetDeltaTime() * m_speed * m_dir_y;
 

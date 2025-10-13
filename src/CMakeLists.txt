@@ -3,6 +3,7 @@ set(PROJECT_SOURCES "")
 add_subdirectory(core)
 add_subdirectory(render)
 add_subdirectory(entity)
+add_subdirectory(utility)
 
 list(APPEND PROJECT_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 

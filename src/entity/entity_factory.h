@@ -5,7 +5,8 @@
 
 enum ENTITIES {
 	PADDLE,
-	BALL
+	BALL,
+	BRICK
 };
 
 class EntityFactory {

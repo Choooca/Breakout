@@ -4,10 +4,9 @@
 class Ball : public Entity {
 public:
 
-	Ball(float position_x, float position_y, float width, float height, Color color = {255, 255, 255, 255});
+	Ball(float position_x, float position_y, float width, float height, Color color);
 
 	void Update(const Game& game) override;
-
 private:
 
 	float m_speed;
