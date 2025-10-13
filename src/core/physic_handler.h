@@ -1,8 +1,11 @@
 #pragma once
 #include <memory>
+#include <vector>
 #include <entity/entity.h>
+#include <entity/moving_entity.h>
 
 class PhysicHandler {
 public:
-	void ProcessPhysic(std::shared_ptr<Entity> ball, std::vector<std::shared_ptr<Entity>> all_entities);
+	void ProcessPhysic(std::vector<std::shared_ptr<MovingEntity>> move_entities, std::vector<std::shared_ptr<Entity>>& all_entities);
+	
 };

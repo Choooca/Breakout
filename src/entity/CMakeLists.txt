@@ -1,6 +1,7 @@
 set(ENTITY_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/entity_factory.cpp	
 	${CMAKE_CURRENT_SOURCE_DIR}/entity.cpp	
+	${CMAKE_CURRENT_SOURCE_DIR}/moving_entity.cpp	
 	${CMAKE_CURRENT_SOURCE_DIR}/paddle.cpp	
 	${CMAKE_CURRENT_SOURCE_DIR}/ball.cpp	
 	${CMAKE_CURRENT_SOURCE_DIR}/brick.cpp	

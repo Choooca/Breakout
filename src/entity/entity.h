@@ -5,6 +5,12 @@
 #include <render/window.h>
 #include <vector>
 
+enum ENTITIES {
+	PADDLE,
+	BALL,
+	BRICK
+};
+
 struct Color {
 	float Red;
 	float Green;
@@ -40,5 +46,4 @@ protected:
 	float m_height;
 
 	Color m_color;
-
 };
