@@ -4,6 +4,7 @@
 #include <core/game.h>
 #include <render/window.h>
 #include <vector>
+#include <string>
 
 enum ENTITIES {
 	PADDLE,
@@ -20,7 +21,7 @@ struct Color {
 
 class Entity {
 public:
-	Entity(float position_x, float position_y, float width, float height, Color color);
+	Entity(float position_x, float position_y, float width, float height, Color color, std::string name);
 
 	void SetColor(Color color);
 	void SetPosition(float x, float y);
@@ -31,12 +32,14 @@ public:
 	inline float GetWidth() const { return m_width; };
 	inline float GetHeight() const { return m_height; };
 
-	virtual void Update(const Game& game) = 0;
+	virtual void Update(const Game& game) {};
 	virtual void Render(const std::unique_ptr<Window>& window);
 
-	virtual void OnHit(Hit hit_result) {};
+	virtual void OnHit(Hit hit_result, std::weak_ptr<Entity> other_entity) {};
 
 	bool m_should_be_free;
+
+	std::string m_name;
 
 protected:
 	float m_position_x;

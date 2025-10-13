@@ -9,19 +9,19 @@ bool PointCollideAABB(const Vector2 point, const AABB aabb) {
 
 	return false;
 }
-
-Hit AABBCollideAABB(const AABB a, const AABB b) {
-	Hit ret = { false, {0,0} };
-
-	AABB minkownski_aabb = MinkowskiDifference(a, b);
-
-	if (!PointCollideAABB({ 0, 0 }, minkownski_aabb)) return ret;
-
-	ret.is_hit = true;
-	ret.penetration_vector = AABBPenetrationVector(minkownski_aabb);
-
-	return ret;
-}
+//
+//Hit AABBCollideAABB(const AABB a, const AABB b) {
+//	Hit ret = { false, {0,0} };
+//
+//	AABB minkownski_aabb = MinkowskiDifference(a, b);
+//
+//	if (!PointCollideAABB({ 0, 0 }, minkownski_aabb)) return ret;
+//
+//	ret.is_hit = true;
+//	ret.penetration_vector = AABBPenetrationVector(minkownski_aabb);
+//
+//	return ret;
+//}
 
 Vector2 AABBPenetrationVector(AABB aabb) {
 	Vector2 min, max;
@@ -83,6 +83,7 @@ Hit SweepStaticMovingAABB(AABB moving_aabb, Vector2 velocity, AABB static_aabb) 
 		x_exit = (sum_aabb.m_x - sum_aabb.m_half_width) / velocity.m_x;
 	}
 	else {
+		if (std::abs(sum_aabb.m_x) > sum_aabb.m_half_width) return{ 0 };
 		x_entry = -INFINITY;
 		x_exit = INFINITY;
 	}
@@ -96,6 +97,7 @@ Hit SweepStaticMovingAABB(AABB moving_aabb, Vector2 velocity, AABB static_aabb) 
 		y_exit = (sum_aabb.m_y - sum_aabb.m_half_height) / velocity.m_y;
 	}
 	else {
+		if (std::abs(sum_aabb.m_y) > sum_aabb.m_half_height) return{ 0 };
 		y_entry = -INFINITY;
 		y_exit = INFINITY;
 	}

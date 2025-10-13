@@ -5,8 +5,6 @@
 
 void PhysicHandler::ProcessPhysic(std::vector<std::shared_ptr<MovingEntity>> move_entities, std::vector<std::shared_ptr<Entity>>& all_entities) {
 	
-	std::vector<std::shared_ptr<Entity>> entity_already_check;
-
 	for (size_t i = 0; i < move_entities.size(); i++) {
 		
 		std::shared_ptr<MovingEntity> entity_a = move_entities[i];
@@ -23,19 +21,17 @@ void PhysicHandler::ProcessPhysic(std::vector<std::shared_ptr<MovingEntity>> mov
 			);
 
 			if (collision.hit) {
-				entity_a->OnHit(collision.A);
-				entity_b->OnHit(collision.B);
+				entity_a->OnHit(collision.A, entity_b);
+				entity_b->OnHit(collision.B, entity_a);
 			}
 		}
-
-		entity_already_check.push_back(entity_a);
-
 	}
+
 
 	for (const std::shared_ptr<MovingEntity>& move_entity : move_entities) {
 
 		for (const std::shared_ptr<Entity>& entity : all_entities) {
-			if (std::find(entity_already_check.begin(), entity_already_check.end(), entity) != entity_already_check.end()) continue;
+			if (std::find(move_entities.begin(), move_entities.end(), entity) != move_entities.end()) continue;
 
 			Collision collision = SweepMovingAABB(
 				{ move_entity->GetXPos(), move_entity->GetYPos(), move_entity->GetWidth() * .5f, move_entity->GetHeight() * .5f },
@@ -45,8 +41,8 @@ void PhysicHandler::ProcessPhysic(std::vector<std::shared_ptr<MovingEntity>> mov
 			);
 
 			if (collision.hit) {
-				move_entity->OnHit(collision.A);
-				entity->OnHit(collision.B);
+				move_entity->OnHit(collision.A, entity);
+				entity->OnHit(collision.B, move_entity);
 			}
 		}
 	}

@@ -20,16 +20,25 @@ void Game::Run() {
 	entity_factory->m_all_entities[paddle_index]->SetColor({255, 100, 255, 255});
 	entity_factory->m_all_entities[paddle_index]->SetPosition(400, 550);
 	entity_factory->m_all_entities[paddle_index]->SetSize(100, 20);
+	entity_factory->m_all_entities[paddle_index]->m_name = "Paddle";
 	
 	int ball_index = entity_factory->CreateEntity(ENTITIES::BALL);
 	entity_factory->m_all_entities.back()->SetColor({100, 255, 255, 255});
 	entity_factory->m_all_entities.back()->SetPosition(400, 400);
 	entity_factory->m_all_entities.back()->SetSize(20, 20);
+	entity_factory->m_all_entities.back()->m_name = "Ball";
 
 	entity_factory->CreateEntity(ENTITIES::BRICK);
 	entity_factory->m_all_entities.back()->SetColor({255, 0, 0, 255});
 	entity_factory->m_all_entities.back()->SetPosition(100, 100);
 	entity_factory->m_all_entities.back()->SetSize(100, 100);
+	entity_factory->m_all_entities.back()->m_name = "Brick";
+
+	entity_factory->CreateEntity(ENTITIES::BRICK);
+	entity_factory->m_all_entities.back()->SetColor({ 255, 0, 0, 255 });
+	entity_factory->m_all_entities.back()->SetPosition(700, 100);
+	entity_factory->m_all_entities.back()->SetSize(100, 100);
+	entity_factory->m_all_entities.back()->m_name = "Brick";
 
 	AABB moving_aabb = { 400, 400, 20, 20 };
 	AABB cursor_aabb = { 400, 400, 5, 5 };
