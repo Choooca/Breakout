@@ -1,10 +1,11 @@
 #pragma once
 #include <utility/aabb_utility.h>
 #include <memory>
-#include <core/game.h>
-#include <graphics/window.h>
 #include <vector>
 #include <string>
+
+class Window;
+class Game;
 
 enum ENTITIES {
 	PADDLE,

@@ -1,6 +1,11 @@
 #include "play_state.h"
 
 #include <memory>
+#include <graphics/ressource_loader.h>
+#include <graphics/window.h>
+#include <entity/entity_factory.h>
+#include <core/physics_handler.h>
+#include <core/game.h>
 
 PlayState::PlayState() {
 
@@ -34,8 +39,24 @@ void PlayState::Update(const Game& game) {
 
 	m_physics_handler->ProcessPhysic(m_entity_factory->m_moving_entities, m_entity_factory->m_all_entities);
 
+	SDL_Texture* tex = game.m_ressource_loader->GetTexture("background/background.png");
+
+	SDL_FRect dest = { 0,0, 1920, 1080 };
+	SDL_RenderTexture(game.m_window->GetRenderer(), tex, nullptr, &dest);
+
+	SDL_Texture* tex2 = game.m_ressource_loader->GetTexture("background/background2.png");
+
+	SDL_FRect dest2 = { 0,0, 1920, 1080 };
+	SDL_RenderTexture(game.m_window->GetRenderer(), tex2, nullptr, &dest2);
+
+	SDL_Texture* tex3 = game.m_ressource_loader->GetTexture("background/background3.png");
+
+	SDL_FRect dest3 = { 0,0, 1920, 1080 };
+	SDL_RenderTexture(game.m_window->GetRenderer(), tex3, nullptr, &dest3);
+
 	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
 		entity->Render(game.m_window);
+
 
 	std::erase_if(m_entity_factory->m_all_entities,
 		[](const std::shared_ptr<Entity>& entity) {

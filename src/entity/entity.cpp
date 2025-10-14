@@ -1,4 +1,6 @@
 #include <entity/entity.h>
+#include <core/game.h>
+#include <graphics/window.h>
 
 Entity::Entity(float position_x, float position_y, float width, float height, Color color, std::string name)
 	: m_position_x(position_x),

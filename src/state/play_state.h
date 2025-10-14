@@ -1,8 +1,10 @@
 #pragma once
 #include "game_state.h"
-#include <entity/entity_factory.h>
-#include <core/physics_handler.h>
-#include <core/game.h>
+#include <memory>
+
+class Game;
+class EntityFactory;
+class PhysicHandler;
 
 class PlayState : public GameState {
 public :

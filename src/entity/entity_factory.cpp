@@ -2,12 +2,13 @@
 #include <entity/ball.h>
 #include <entity/paddle.h>
 #include <entity/brick.h>
+#include <entity/moving_entity.h>
 
-int EntityFactory::CreateEntity(ENTITIES entity_type) {
+std::shared_ptr<Entity> EntityFactory::CreateEntity(ENTITIES entity_type) {
 	return CreateEntity(entity_type, 0.0f, 0.0f, 10.0f, 10.0f, { 255, 255, 255, 255 });
 }
 
-int EntityFactory::CreateEntity(ENTITIES entity_type, float position_x, float position_y, float width, float height, Color color) {
+std::shared_ptr<Entity> EntityFactory::CreateEntity(ENTITIES entity_type, float position_x, float position_y, float width, float height, Color color) {
 
 	switch (entity_type)
 	{
@@ -30,6 +31,6 @@ int EntityFactory::CreateEntity(ENTITIES entity_type, float position_x, float po
 		break;
 	}
 
-	return m_all_entities.size() - 1;
+	return m_all_entities.back();
 
 }

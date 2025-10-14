@@ -1,9 +1,10 @@
 #pragma once
-#include <core/input_handler.h>
-#include <core/game.h>
 #include <memory>
-#include <entity/entity.h>
 #include <entity/moving_entity.h>
+
+class Entity;
+class Game;
+class InputHandler;
 
 class Paddle : public MovingEntity {
 public:

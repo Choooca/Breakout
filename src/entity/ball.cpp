@@ -4,6 +4,9 @@
 #include <cmath>
 #include <utility/aabb_utility.h>
 #include <utility/math_utils.h>
+#include <graphics/window.h>
+#include <core/game.h>
+#include <core/input_handler.h>
 
 Ball::Ball(float position_x, float position_y, float width, float height, Color color, std::string name, float speed)
 	: MovingEntity(position_x, position_y, width, height, color, name, speed),

@@ -1,8 +1,9 @@
 #pragma once
 #include <memory>
 #include <vector>
-#include <entity/entity.h>
-#include <entity/moving_entity.h>
+
+class Entity;
+class MovingEntity;
 
 class PhysicHandler {
 public:

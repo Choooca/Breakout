@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
-#include <graphics/window.h>
+
+class Window;
 
 struct AABB {
 	float m_x;

@@ -1,4 +1,5 @@
 #include "aabb_utility.h"
+#include <graphics/window.h>
 #include <cmath>
 
 bool PointCollideAABB(const Vector2 point, const AABB aabb) {

@@ -2,6 +2,8 @@
 #include <utility/aabb_utility.h>
 #include <iostream>
 #include <windows.h>
+#include <entity/entity.h>
+#include <entity/moving_entity.h>
 
 void PhysicHandler::ProcessPhysic(std::vector<std::shared_ptr<MovingEntity>> move_entities, std::vector<std::shared_ptr<Entity>>& all_entities) {
 	

@@ -1,6 +1,10 @@
 #include "paddle.h"
+#include <core/input_handler.h>
+#include <core/game.h>
+#include <entity/entity.h>
 #include <iostream>
 #include <algorithm>
+#include <graphics/window.h>
 
 Paddle::Paddle(float position_x, float position_y, float width, float height, Color color, std::string name, float speed)
 	: MovingEntity(position_x, position_y, width, height, color, name, speed),

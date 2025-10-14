@@ -1,7 +1,5 @@
 #include "window.h"
 #include <cstdio>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
 
 Window::Window(int window_width, int window_height) 
 : m_window_width(window_width), m_window_height(window_height)

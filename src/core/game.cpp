@@ -2,11 +2,14 @@
 #include <memory>
 #include <state/game_state.h>
 #include <state/play_state.h>
+#include <graphics/ressource_loader.h>
 
 Game::Game() {
 	m_window = std::make_unique<Window>();
 	m_input_handler = std::make_unique<InputHandler>(m_window->GetWindow());
 	m_current_state = std::make_unique<PlayState>();
+	m_ressource_loader = std::make_unique<RessourceLoader>(m_window->GetRenderer());
+
 }
 
 void Game::Run() {

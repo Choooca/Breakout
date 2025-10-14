@@ -1,7 +1,8 @@
 #pragma once
-#include <entity/entity.h>
-#include <entity/moving_entity.h>
 #include <utility/aabb_utility.h>
+#include <entity/moving_entity.h>
+
+class Entity;
 
 class Ball : public MovingEntity {
 public:
