@@ -11,7 +11,7 @@ InputHandler::~InputHandler() {}
 
 void InputHandler::CalculateDeltaTime() {
 	m_current_time = SDL_GetTicks();
-	m_delta_time = (m_last_time - m_current_time) / 1000.0f;
+	m_delta_time = (m_current_time - m_last_time) / 1000.0f;
 	m_last_time = m_current_time;
 }
 

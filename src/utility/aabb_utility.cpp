@@ -144,13 +144,13 @@ Collision SweepMovingAABB(AABB first_moving, Vector2 first_velocity, AABB second
 			true,
 			hit.collision_time,
 			{first_moving.m_x + first_velocity.m_x * hit.collision_time, first_moving.m_y + first_velocity.m_y * hit.collision_time},
-			hit.normal
+			{hit.normal.m_x * -1.0f, hit.normal.m_y * -1.0f}
 		};
 		collision.B = {
 			true,
 			hit.collision_time,
 			{second_moving.m_x + second_velocity.m_x * hit.collision_time, second_moving.m_y + second_velocity.m_y * hit.collision_time},
-			{hit.normal.m_x * -1.0f, hit.normal.m_y * -1.0f}
+			hit.normal
 		};
 	}
 

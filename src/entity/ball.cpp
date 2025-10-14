@@ -11,7 +11,7 @@
 Ball::Ball(float position_x, float position_y, float width, float height, Color color, std::string name, float speed)
 	: MovingEntity(position_x, position_y, width, height, color, name, speed),
 	  m_dir_x(-1),
-	  m_dir_y(-1)
+	  m_dir_y(1)
 	  { }
 
 void Ball::Update(const Game& game) {

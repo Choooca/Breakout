@@ -7,8 +7,8 @@
 Game::Game() {
 	m_window = std::make_unique<Window>();
 	m_input_handler = std::make_unique<InputHandler>(m_window->GetWindow());
-	m_current_state = std::make_unique<PlayState>();
 	m_ressource_loader = std::make_unique<RessourceLoader>(m_window->GetRenderer());
+	m_current_state = std::make_unique<PlayState>(m_ressource_loader);
 
 }
 
