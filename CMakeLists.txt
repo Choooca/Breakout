@@ -20,7 +20,13 @@ FetchContent_Declare(
 	GIT_TAG release-3.2.24
 )
 
-FetchContent_MakeAvailable(SDL3)
+FetchContent_Declare(
+	miniaudio
+	GIT_REPOSITORY https://github.com/mackron/miniaudio.git
+	GIT_TAG 0.11.23
+)
+
+FetchContent_MakeAvailable(SDL3 miniaudio)
 
 add_library(stb INTERFACE)
 target_include_directories(stb INTERFACE ${CMAKE_SOURCE_DIR}/external/stb)

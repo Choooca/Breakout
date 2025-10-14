@@ -32,7 +32,6 @@ PlayState::PlayState(const std::unique_ptr<RessourceLoader>& ressource_loader) {
 	new ParallaxBackground(ressource_loader->GetTexture("background/background2.png"), 0, 0, 1920, 1080, m_paddle, 20);
 
 	m_all_backgrounds.push_back(std::make_unique<ParallaxBackground>(ressource_loader->GetTexture("background/background.png"), 0, 1800, 1080, 1920, m_paddle, 10));
-	//m_all_backgrounds.push_back(std::make_unique<ParallaxBackground>(ressource_loader->GetTexture("background/background2.png"), 0, 0, 1920, 1080, m_paddle, 20));
 	m_all_backgrounds.push_back(std::make_unique<ParallaxBackground>(ressource_loader->GetTexture("background/background3.png"), -40, 0, 1080, 1920, m_paddle, 50));
 	m_all_backgrounds.push_back(std::make_unique<ParallaxBackground>(ressource_loader->GetTexture("background/background4.png"), -40, 0, 1080, 1920, m_paddle, 70));
 }
