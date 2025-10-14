@@ -106,10 +106,10 @@ Hit SweepStaticMovingAABB(AABB moving_aabb, Vector2 velocity, AABB static_aabb) 
 	float last_entry = std::max(x_entry, y_entry);
 	float first_exit = std::min(x_exit, y_exit);
 
-	if (last_entry > first_exit ||
-		(x_entry < 0 && y_entry < 0) ||
-		last_entry > 1 ||
-		last_entry < 0) return { 0 };
+	if (last_entry >= first_exit ||
+		(x_entry <= 0 && y_entry <= 0) ||
+		last_entry >= 1 ||
+		last_entry <= 0) return { 0 };
 
 	Vector2 normal;
 	if (x_entry > y_entry) {

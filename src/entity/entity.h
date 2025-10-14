@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <SDL3/SDL.h>
 
 class Window;
 class Game;
@@ -22,11 +23,12 @@ struct Color {
 
 class Entity {
 public:
-	Entity(float position_x, float position_y, float width, float height, Color color, std::string name);
+	Entity(float position_x, float position_y, float width, float height, Color color, std::string name, SDL_Texture* texture);
 
 	void SetColor(Color color);
 	void SetPosition(float x, float y);
 	void SetSize(float width, float height);
+	void SetTexture(SDL_Texture* texture);
 
 	inline float GetXPos() const { return m_position_x; };
 	inline float GetYPos() const { return m_position_y; };
@@ -52,4 +54,8 @@ protected:
 	float m_height;
 
 	Color m_color;
+
+private:
+
+	SDL_Texture* m_texture;
 };

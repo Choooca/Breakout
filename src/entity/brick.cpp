@@ -1,7 +1,7 @@
 #include "brick.h"
 
-Brick::Brick(float position_x, float position_y, float width, float height, Color color, std::string name)
-	: Entity(position_x, position_y, width, height, color, name){ }
+Brick::Brick(float position_x, float position_y, float width, float height, Color color, std::string name, SDL_Texture* texture)
+	: Entity(position_x, position_y, width, height, color, name, texture){ }
 
 void Brick::Update(const Game& game) {}
 

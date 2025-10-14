@@ -13,7 +13,7 @@ class RessourceLoader;
 
 class PlayState : public GameState {
 public :
-	PlayState(const std::unique_ptr<RessourceLoader>& ressource_loarder);
+	PlayState(const Game& game);
 
 	void Update(const Game &game) override;
 
