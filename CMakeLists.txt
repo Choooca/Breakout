@@ -20,7 +20,7 @@ FetchContent_Declare(
 	GIT_TAG release-3.2.24
 )
 
-FetchContent_MakeAvailable(SDL3)
+FetchContent_MakeAvailable(SDL3 )
 
 add_library(stb INTERFACE)
 target_include_directories(stb INTERFACE ${CMAKE_SOURCE_DIR}/external/stb)

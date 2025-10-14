@@ -14,6 +14,4 @@ private:
 
 	float m_dir_x;
 	float m_dir_y;
-
-	void ReflectVector(float &vec_x, float &vec_y, float normal_x, float normal_y);
 };

@@ -2,7 +2,7 @@
 #include <utility/aabb_utility.h>
 #include <memory>
 #include <core/game.h>
-#include <render/window.h>
+#include <graphics/window.h>
 #include <vector>
 #include <string>
 

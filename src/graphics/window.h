@@ -3,7 +3,7 @@
 
 class Window {
 public:
-	Window(int window_width = 800, int window_height = 600);
+	Window(int window_width = 900, int window_height = 900);
 	~Window();
 
 	void RenderBegin();

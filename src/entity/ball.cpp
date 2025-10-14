@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cmath>
 #include <utility/aabb_utility.h>
+#include <utility/math_utils.h>
 
 Ball::Ball(float position_x, float position_y, float width, float height, Color color, std::string name, float speed)
 	: MovingEntity(position_x, position_y, width, height, color, name, speed),
@@ -54,10 +55,3 @@ void Ball::OnHit(Hit hit_result, std::weak_ptr<Entity> other_entity) {
 	entity->ModifyBallDirection(m_dir_x, m_dir_y, hit_result);
 }
 
-void Ball::ReflectVector(float &vec_x, float &vec_y, float normal_x, float normal_y) {
-
-	float dot = vec_x * normal_x + vec_y * normal_y;
-
-	vec_x = vec_x - 2.0f * dot * normal_x;
-	vec_y = vec_y - 2.0f * dot * normal_y;
-}
