@@ -14,6 +14,7 @@ enum ENTITIES {
 
 class MovingEntity;
 class Ball;
+class Brick;
 
 class EntityFactory {
 public:
@@ -23,4 +24,7 @@ public:
 	std::vector<std::shared_ptr<Entity>> m_all_entities;
 	std::vector<std::weak_ptr<MovingEntity>> m_moving_entities;
 	std::vector<std::weak_ptr<Ball>> m_balls;
+	std::vector<std::weak_ptr<Brick>> m_bricks;
+
+	void Clear();
 };

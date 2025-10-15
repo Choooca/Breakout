@@ -26,9 +26,12 @@ std::shared_ptr<Entity> EntityFactory::CreateEntity(ENTITIES entity_type, float 
 		m_balls.push_back(ball);
 		break;
 	}
-	case ENTITY_BRICK:
-		m_all_entities.push_back(std::make_shared<Brick>(position_x, position_y, width, height, color, "Brick", texture, false, 2));
+	case ENTITY_BRICK: {
+		std::shared_ptr<Brick> brick = std::make_shared<Brick>(position_x, position_y, width, height, color, "Brick", texture, false, 2);
+		m_all_entities.push_back(brick);
+		m_bricks.push_back(brick);
 		break;
+	}
 	case ENTITY_WALL:
 		m_all_entities.push_back(std::make_shared<Brick>(position_x, position_y, width, height, color, "Wall", texture, true, 1));
 		break;
@@ -44,4 +47,26 @@ std::shared_ptr<Entity> EntityFactory::CreateEntity(ENTITIES entity_type, float 
 
 	return m_all_entities.back();
 
+}
+
+void EntityFactory::Clear() {
+
+	if (m_all_entities.empty()) return;
+
+	m_all_entities.clear();
+
+	std::erase_if(m_moving_entities,
+		[](const std::weak_ptr<MovingEntity>& entity) {
+			return entity.expired();
+		});
+
+	std::erase_if(m_balls,
+		[](const std::weak_ptr<Ball>& entity) {
+			return entity.expired();
+		});
+
+	std::erase_if(m_bricks,
+		[](const std::weak_ptr<Brick>& entity) {
+			return entity.expired();
+		});
 }

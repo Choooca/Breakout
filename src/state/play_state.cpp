@@ -9,16 +9,21 @@
 #include <entity/power_up.h>
 #include <entity/ball.h>
 
-std::shared_ptr<PowerUp> powerup;
-
 PlayState::PlayState(const Game& game) :
 	m_side_margin(54), m_top_margin(50),  m_n_brick_x(13), m_n_brick_y(13)
 {
 	m_entity_factory = std::make_unique<EntityFactory>();
 	m_physics_handler = std::make_unique<PhysicHandler>();
 
+	SetModePlay(game);
+}
+
+void PlayState::SetModePlay(const Game& game) {
+
+	m_entity_factory->Clear();
+
 	m_paddle = m_entity_factory->CreateEntity(ENTITIES::ENTITY_PADDLE);
-	m_entity_factory->m_all_entities.back()->SetColor({255, 100, 255, 255});
+	m_entity_factory->m_all_entities.back()->SetColor({ 255, 100, 255, 255 });
 	m_entity_factory->m_all_entities.back()->SetPosition(400, 800);
 	m_entity_factory->m_all_entities.back()->SetSize(100, 20);
 
@@ -29,7 +34,37 @@ PlayState::PlayState(const Game& game) :
 
 	CreateWall(game);
 
-	m_current_level = std::make_unique<Level>("level1.txt", game, *this , m_entity_factory);
+	m_current_level = std::make_unique<Level>("level1.txt", game, *this, m_entity_factory);
+
+	m_current_update = &PlayState::UpdatePlay;
+}
+
+void PlayState::UpdatePlay(const Game& game) {
+	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
+		entity->Update(game, *this);
+
+	m_physics_handler->ProcessPhysic(*this, game);
+
+	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
+		entity->Render(game.m_window);
+
+	DestroyQueue();
+
+	CheckWinCondition();
+}
+
+void PlayState::SetModeLose(const Game& game) {
+
+}
+void PlayState::UpdateLose(const Game& game) {
+
+}
+
+void PlayState::SetModeWin(const Game& game) {
+
+}
+void PlayState::UpdateWin(const Game& game) {
+
 }
 
 void PlayState::CreateWall(const Game &game) {
@@ -53,16 +88,8 @@ void PlayState::CreateWall(const Game &game) {
 }
 
 void PlayState::Update(const Game& game) {
-
-	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
-		entity->Update(game, *this);
-
-	m_physics_handler->ProcessPhysic(*this, game);
-
-	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
-		entity->Render(game.m_window);
-
-	DestroyQueue();
+	if (m_current_update) (this->*m_current_update)(game);
+	
 }
 
 void PlayState::DestroyQueue() {
@@ -81,4 +108,20 @@ void PlayState::DestroyQueue() {
 			return entity.expired();
 		});
 
+	std::erase_if(m_entity_factory->m_bricks,
+		[](const std::weak_ptr<Brick>& entity) {
+			return entity.expired();
+		});
+
+}
+
+void PlayState::CheckWinCondition() {
+	if (m_entity_factory->m_bricks.size() == 0) {
+		//win
+		return;
+	}
+
+	if (m_entity_factory->m_balls.size() == 0) {
+		//lose
+	}
 }

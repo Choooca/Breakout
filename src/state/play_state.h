@@ -29,6 +29,8 @@ public :
 
 private:
 
+	void (PlayState::*m_current_update)(const Game& game) = nullptr;
+
 	std::vector<std::unique_ptr<ParallaxBackground>> m_all_backgrounds;
 
 	std::shared_ptr<Entity> m_paddle;
@@ -41,4 +43,14 @@ private:
 
 	void CreateWall(const Game &game);
 	void DestroyQueue();
+	void CheckWinCondition();
+
+	void SetModePlay(const Game& game);
+	void UpdatePlay(const Game& game);
+
+	void SetModeLose(const Game& game);
+	void UpdateLose(const Game& game);
+
+	void SetModeWin(const Game& game);
+	void UpdateWin(const Game& game);
 };
