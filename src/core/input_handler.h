@@ -9,7 +9,7 @@ public:
 	void Update();
 	bool GetKey(int key_code) const;
 	
-	float GetDeltaTime() { return m_delta_time; }
+	inline float GetDeltaTime() { return m_delta_time; }
 
 	bool m_quit;
 

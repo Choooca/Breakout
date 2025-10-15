@@ -3,10 +3,10 @@
 #include <cmath>
 
 bool PointCollideAABB(const Vector2 point, const AABB aabb) {
-	if (point.m_x > aabb.m_x - aabb.m_half_width &&
-		point.m_x < aabb.m_x + aabb.m_half_width &&
-		point.m_y > aabb.m_y - aabb.m_half_height &&
-		point.m_y < aabb.m_y + aabb.m_half_height) return true;
+	if (point.x > aabb.x - aabb.m_half_width &&
+		point.x < aabb.x + aabb.m_half_width &&
+		point.y > aabb.y - aabb.m_half_height &&
+		point.y < aabb.y + aabb.m_half_height) return true;
 
 	return false;
 }
@@ -26,29 +26,29 @@ bool PointCollideAABB(const Vector2 point, const AABB aabb) {
 
 Vector2 AABBPenetrationVector(AABB aabb) {
 	Vector2 min, max;
-	min.m_x = aabb.m_x - aabb.m_half_width;
-	max.m_x = aabb.m_x + aabb.m_half_width;
-	min.m_y = aabb.m_y - aabb.m_half_height;
-	max.m_y = aabb.m_y + aabb.m_half_height;
+	min.x = aabb.x - aabb.m_half_width;
+	max.x = aabb.x + aabb.m_half_width;
+	min.y = aabb.y - aabb.m_half_height;
+	max.y = aabb.y + aabb.m_half_height;
 
 	Vector2 pv;
 
-	float min_dist = std::abs(min.m_x);
-	pv = { min.m_x, 0.0f };
+	float min_dist = std::abs(min.x);
+	pv = { min.x, 0.0f };
 
-	if (std::abs(max.m_x) < min_dist) {
-		min_dist = std::abs(max.m_x);
-		pv = { max.m_x, 0.0f };
+	if (std::abs(max.x) < min_dist) {
+		min_dist = std::abs(max.x);
+		pv = { max.x, 0.0f };
 	}
 
-	if (std::abs(min.m_y) < min_dist) {
-		min_dist = std::abs(min.m_y);
-		pv = { 0.0f, min.m_y };
+	if (std::abs(min.y) < min_dist) {
+		min_dist = std::abs(min.y);
+		pv = { 0.0f, min.y };
 	}
 
-	if (std::abs(max.m_y) < min_dist) {
-		min_dist = std::abs(max.m_y);
-		pv = { 0.0f, max.m_y };
+	if (std::abs(max.y) < min_dist) {
+		min_dist = std::abs(max.y);
+		pv = { 0.0f, max.y };
 	}
 
 	return pv;
@@ -56,8 +56,8 @@ Vector2 AABBPenetrationVector(AABB aabb) {
 
 AABB MinkowskiDifference(const AABB a, const AABB b) {
 	AABB ret;
-	ret.m_x = a.m_x - b.m_x;
-	ret.m_y = a.m_y - b.m_y;
+	ret.x = a.x - b.x;
+	ret.y = a.y - b.y;
 
 	ret.m_half_width = a.m_half_width + b.m_half_width;
 	ret.m_half_height = a.m_half_height + b.m_half_height;
@@ -67,7 +67,7 @@ AABB MinkowskiDifference(const AABB a, const AABB b) {
 
 
 Hit SweepStaticMovingAABB(AABB moving_aabb, Vector2 velocity, AABB static_aabb) {
-	if (velocity.m_x == 0 && velocity.m_y == 0) {
+	if (velocity.x == 0 && velocity.y == 0) {
 		return { 0 };
 	}
 
@@ -75,30 +75,30 @@ Hit SweepStaticMovingAABB(AABB moving_aabb, Vector2 velocity, AABB static_aabb) 
 
 	float x_entry, x_exit, y_entry, y_exit;
 
-	if (velocity.m_x > 0) {
-		x_entry = (sum_aabb.m_x - sum_aabb.m_half_width) / velocity.m_x;
-		x_exit = (sum_aabb.m_x + sum_aabb.m_half_width) / velocity.m_x;
+	if (velocity.x > 0) {
+		x_entry = (sum_aabb.x - sum_aabb.m_half_width) / velocity.x;
+		x_exit = (sum_aabb.x + sum_aabb.m_half_width) / velocity.x;
 	}
-	else if (velocity.m_x < 0) {
-		x_entry = (sum_aabb.m_x + sum_aabb.m_half_width) / velocity.m_x;
-		x_exit = (sum_aabb.m_x - sum_aabb.m_half_width) / velocity.m_x;
+	else if (velocity.x < 0) {
+		x_entry = (sum_aabb.x + sum_aabb.m_half_width) / velocity.x;
+		x_exit = (sum_aabb.x - sum_aabb.m_half_width) / velocity.x;
 	}
 	else {
-		if (std::abs(sum_aabb.m_x) > sum_aabb.m_half_width) return{ 0 };
+		if (std::abs(sum_aabb.x) > sum_aabb.m_half_width) return{ 0 };
 		x_entry = -INFINITY;
 		x_exit = INFINITY;
 	}
 
-	if (velocity.m_y > 0) {
-		y_entry = (sum_aabb.m_y - sum_aabb.m_half_height) / velocity.m_y;
-		y_exit = (sum_aabb.m_y + sum_aabb.m_half_height) / velocity.m_y;
+	if (velocity.y > 0) {
+		y_entry = (sum_aabb.y - sum_aabb.m_half_height) / velocity.y;
+		y_exit = (sum_aabb.y + sum_aabb.m_half_height) / velocity.y;
 	}
-	else if (velocity.m_y < 0) {
-		y_entry = (sum_aabb.m_y + sum_aabb.m_half_height) / velocity.m_y;
-		y_exit = (sum_aabb.m_y - sum_aabb.m_half_height) / velocity.m_y;
+	else if (velocity.y < 0) {
+		y_entry = (sum_aabb.y + sum_aabb.m_half_height) / velocity.y;
+		y_exit = (sum_aabb.y - sum_aabb.m_half_height) / velocity.y;
 	}
 	else {
-		if (std::abs(sum_aabb.m_y) > sum_aabb.m_half_height) return{ 0 };
+		if (std::abs(sum_aabb.y) > sum_aabb.m_half_height) return{ 0 };
 		y_entry = -INFINITY;
 		y_exit = INFINITY;
 	}
@@ -113,26 +113,26 @@ Hit SweepStaticMovingAABB(AABB moving_aabb, Vector2 velocity, AABB static_aabb) 
 
 	Vector2 normal;
 	if (x_entry > y_entry) {
-		normal.m_y = 0;
-		normal.m_x = velocity.m_x > 0 ? -1 : 1;
+		normal.y = 0;
+		normal.x = velocity.x > 0 ? -1 : 1;
 	}
 	else {
-		normal.m_x = 0;
-		normal.m_y = velocity.m_y > 0 ? -1 : 1;
+		normal.x = 0;
+		normal.y = velocity.y > 0 ? -1 : 1;
 	}
 
 	return {
 		true,
 		last_entry,
-		{moving_aabb.m_x + velocity.m_x * last_entry, moving_aabb.m_y + velocity.m_y * last_entry},
+		{moving_aabb.x + velocity.x * last_entry, moving_aabb.y + velocity.y * last_entry},
 		normal
 	};
 }
 
 Collision SweepMovingAABB(AABB first_moving, Vector2 first_velocity, AABB second_moving, Vector2 second_velocity) {
 	Vector2 relative_velocity = {
-		first_velocity.m_x - second_velocity.m_x,
-		first_velocity.m_y - second_velocity.m_y
+		first_velocity.x - second_velocity.x,
+		first_velocity.y - second_velocity.y
 	};
 
 	Hit hit = SweepStaticMovingAABB(first_moving, relative_velocity, second_moving);
@@ -143,13 +143,13 @@ Collision SweepMovingAABB(AABB first_moving, Vector2 first_velocity, AABB second
 		collision.A = {
 			true,
 			hit.collision_time,
-			{first_moving.m_x + first_velocity.m_x * hit.collision_time, first_moving.m_y + first_velocity.m_y * hit.collision_time},
-			{hit.normal.m_x * -1.0f, hit.normal.m_y * -1.0f}
+			{first_moving.x + first_velocity.x * hit.collision_time, first_moving.y + first_velocity.y * hit.collision_time},
+			{hit.normal.x * -1.0f, hit.normal.y * -1.0f}
 		};
 		collision.B = {
 			true,
 			hit.collision_time,
-			{second_moving.m_x + second_velocity.m_x * hit.collision_time, second_moving.m_y + second_velocity.m_y * hit.collision_time},
+			{second_moving.x + second_velocity.x * hit.collision_time, second_moving.y + second_velocity.y * hit.collision_time},
 			hit.normal
 		};
 	}
@@ -160,6 +160,6 @@ Collision SweepMovingAABB(AABB first_moving, Vector2 first_velocity, AABB second
 void ShowAABB(const std::unique_ptr<Window>& window, AABB aabb, int r, int g, int b, int a)
 {
 	SDL_SetRenderDrawColor(window->GetRenderer(), r, g, b, a);
-	SDL_FRect rect = { aabb.m_x - aabb.m_half_width, aabb.m_y - aabb.m_half_height, aabb.m_half_width * 2.0f, aabb.m_half_height * 2.0f };
+	SDL_FRect rect = { aabb.x - aabb.m_half_width, aabb.y - aabb.m_half_height, aabb.m_half_width * 2.0f, aabb.m_half_height * 2.0f };
 	SDL_RenderFillRect(window->GetRenderer(), &rect);
 }

@@ -7,8 +7,9 @@
 #include <graphics/background.h>
 #include <cstdlib>
 
-PlayState::PlayState(const Game& game) {
-
+PlayState::PlayState(const Game& game) :
+	m_side_margin(54), m_top_margin(50),  m_n_brick_x(13), m_n_brick_y(13)
+{
 	m_entity_factory = std::make_unique<EntityFactory>();
 	m_physics_handler = std::make_unique<PhysicHandler>();
 
@@ -20,47 +21,45 @@ PlayState::PlayState(const Game& game) {
 
 	m_entity_factory->CreateEntity(ENTITIES::BALL);
 	m_entity_factory->m_all_entities.back()->SetColor({ 100, 255, 255, 255 });
-	m_entity_factory->m_all_entities.back()->SetPosition(400, 400);
-	m_entity_factory->m_all_entities.back()->SetSize(20, 20);
+	m_entity_factory->m_all_entities.back()->SetPosition(400, 700);
+	m_entity_factory->m_all_entities.back()->SetSize(14, 14);
 	m_entity_factory->m_all_entities.back()->m_name = "Ball";
+	m_entity_factory->m_all_entities.back()->SetTexture(game.m_ressource_loader->GetTexture("objects/ball.png"));
 
-	float x_step = game.m_window->GetWidth() / 15.0f;
-	float y_step = 500.0f / 15.0f;
-	float y_offset = 50.0f;
+	CreateWall(game);
 
-	for (size_t i = 0; i < 15*15; i++)
-	{
-		m_entity_factory->CreateEntity(ENTITIES::BRICK);
-		m_entity_factory->m_all_entities.back()->SetColor({ 255, 0, 0, 255 });
-		m_entity_factory->m_all_entities.back()->SetPosition((i % 15) * x_step + x_step * .5f, (i / 15) * y_step + y_step * .5f  + y_offset);
-		m_entity_factory->m_all_entities.back()->SetSize(x_step, y_step);
-		m_entity_factory->m_all_entities.back()->m_name = "Brick";
-		m_entity_factory->m_all_entities.back()->SetTexture(game.m_ressource_loader->GetTexture("objects/brick" + std::to_string((((i % 15) % 2) + 1)) + ".png"));
-		//m_entity_factory->m_all_entities.back()->SetTexture(game.m_ressource_loader->GetTexture("objects/brick1.png"));
-	}
+	m_current_level = std::make_unique<Level>("level1.txt", game, *this , m_entity_factory);
+}
 
-	new ParallaxBackground(game.m_ressource_loader->GetTexture("background/background2.png"), 0, 0, 1920, 1080, m_paddle, 20);
+void PlayState::CreateWall(const Game &game) {
+	m_entity_factory->CreateEntity(ENTITIES::WALL);
+	m_entity_factory->m_all_entities.back()->SetColor({ 200, 200, 200, 255 });
+	m_entity_factory->m_all_entities.back()->SetPosition(GetSideMargin() * .5f, game.m_window->GetHeight() * .5f);
+	m_entity_factory->m_all_entities.back()->SetSize(GetSideMargin(), game.m_window->GetHeight());
+	m_entity_factory->m_all_entities.back()->m_name = "Wall";
 
-	m_all_backgrounds.push_back(std::make_unique<ParallaxBackground>(game.m_ressource_loader->GetTexture("background/background.png"), 0, 1800, 1080, 1920, m_paddle, 10));
-	m_all_backgrounds.push_back(std::make_unique<ParallaxBackground>(game.m_ressource_loader->GetTexture("background/background3.png"), -40, 0, 1080, 1920, m_paddle, 50));
-	m_all_backgrounds.push_back(std::make_unique<ParallaxBackground>(game.m_ressource_loader->GetTexture("background/background4.png"), -40, 0, 1080, 1920, m_paddle, 70));
+	m_entity_factory->CreateEntity(ENTITIES::WALL);
+	m_entity_factory->m_all_entities.back()->SetColor({ 200, 200, 200, 255 });
+	m_entity_factory->m_all_entities.back()->SetPosition(game.m_window->GetWidth() - GetSideMargin() * .5f, game.m_window->GetHeight() * .5f);
+	m_entity_factory->m_all_entities.back()->SetSize(GetSideMargin(), game.m_window->GetHeight());
+	m_entity_factory->m_all_entities.back()->m_name = "Wall";
+
+	m_entity_factory->CreateEntity(ENTITIES::WALL);
+	m_entity_factory->m_all_entities.back()->SetColor({ 200, 200, 200, 255 });
+	m_entity_factory->m_all_entities.back()->SetPosition(game.m_window->GetWidth() * .5f, GetTopMargin() * .5f);
+	m_entity_factory->m_all_entities.back()->SetSize(game.m_window->GetWidth(), GetTopMargin());
+	m_entity_factory->m_all_entities.back()->m_name = "Wall";
 }
 
 void PlayState::Update(const Game& game) {
 
 	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
-		entity->Update(game);
+		entity->Update(game, *this);
 
 	m_physics_handler->ProcessPhysic(m_entity_factory->m_moving_entities, m_entity_factory->m_all_entities);
 
-	for (const std::unique_ptr<ParallaxBackground>& background : m_all_backgrounds) {
-		background->Update(game);
-		background->Render(game);
-	}
-
 	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
 		entity->Render(game.m_window);
-
 
 	std::erase_if(m_entity_factory->m_all_entities,
 		[](const std::shared_ptr<Entity>& entity) {

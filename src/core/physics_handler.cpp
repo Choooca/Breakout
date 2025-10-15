@@ -9,9 +9,13 @@ void PhysicHandler::ProcessPhysic(std::vector<std::shared_ptr<MovingEntity>> mov
 	
 	for (size_t i = 0; i < move_entities.size(); i++) {
 		
+		if (!move_entities[i]->GetColliding()) continue;
+
 		std::shared_ptr<MovingEntity> entity_a = move_entities[i];
 
 		for (size_t j = i + 1; j < move_entities.size(); j++) {
+
+			if (!move_entities[j]->GetColliding()) continue;
 
 			std::shared_ptr<MovingEntity> entity_b = move_entities[j];
 
@@ -32,7 +36,12 @@ void PhysicHandler::ProcessPhysic(std::vector<std::shared_ptr<MovingEntity>> mov
 
 	for (const std::shared_ptr<MovingEntity>& move_entity : move_entities) {
 
+		if (!move_entity->GetColliding()) continue;
+
 		for (const std::shared_ptr<Entity>& entity : all_entities) {
+
+			if (!entity->GetColliding()) continue;
+
 			if (std::find(move_entities.begin(), move_entities.end(), entity) != move_entities.end()) continue;
 
 			Collision collision = SweepMovingAABB(

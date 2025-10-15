@@ -25,7 +25,10 @@ std::shared_ptr<Entity> EntityFactory::CreateEntity(ENTITIES entity_type, float 
 		break;
 	}
 	case BRICK:
-		m_all_entities.push_back(std::make_shared<Brick>(position_x, position_y, width, height, color, "", texture));
+		m_all_entities.push_back(std::make_shared<Brick>(position_x, position_y, width, height, color, "", texture, false, 2));
+		break;
+	case WALL:
+		m_all_entities.push_back(std::make_shared<Brick>(position_x, position_y, width, height, color, "", texture, true, 1));
 		break;
 	default:
 		break;

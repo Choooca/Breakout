@@ -2,6 +2,7 @@ set(CORE_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/input_handler.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/physics_handler.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/game.cpp	
+	${CMAKE_CURRENT_SOURCE_DIR}/level.cpp	
 )
 
 list(APPEND PROJECT_SOURCES ${CORE_SOURCES})

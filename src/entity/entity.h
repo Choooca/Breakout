@@ -4,21 +4,25 @@
 #include <vector>
 #include <string>
 #include <SDL3/SDL.h>
+#include <utility/coroutine.h>
 
 class Window;
 class Game;
+class Vector2;
+class PlayState;
 
 enum ENTITIES {
 	PADDLE,
 	BALL,
-	BRICK
+	BRICK,
+	WALL
 };
 
 struct Color {
-	float Red;
-	float Green;
-	float Blue;
-	float Alpha;
+	float red;
+	float green;
+	float blue;
+	float alpha;
 };
 
 class Entity {
@@ -35,7 +39,9 @@ public:
 	inline float GetWidth() const { return m_width; };
 	inline float GetHeight() const { return m_height; };
 
-	virtual void Update(const Game& game) {};
+	inline bool GetColliding() const { return m_colliding; };
+
+	virtual void Update(const Game& game, const PlayState& state);
 	virtual void Render(const std::unique_ptr<Window>& window);
 
 	virtual void OnHit(Hit hit_result, std::weak_ptr<Entity> other_entity) {};
@@ -46,16 +52,24 @@ public:
 
 	std::string m_name;
 
+	std::unique_ptr<CoroutineManager> m_coroutines;
+
 protected:
 	float m_position_x;
 	float m_position_y;
+
+	float m_render_offset_x;
+	float m_render_offset_y;
 
 	float m_width;
 	float m_height;
 
 	Color m_color;
 
-private:
+	float m_elapsed;
 
+	bool m_colliding;
+	
 	SDL_Texture* m_texture;
+
 };

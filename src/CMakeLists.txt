@@ -13,6 +13,7 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
 target_compile_definitions(${PROJECT_NAME} PRIVATE
 	PROJECT_ROOT="${CMAKE_SOURCE_DIR}"
 	ASSETS_PATH="${CMAKE_SOURCE_DIR}/assets"
+	LEVELS_PATH="${CMAKE_SOURCE_DIR}/assets/levels"
 	TEXTURES_PATH="${CMAKE_SOURCE_DIR}/assets/textures")
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)

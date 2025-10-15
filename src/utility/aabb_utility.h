@@ -1,18 +1,14 @@
 #pragma once
 #include <memory>
+#include <utility/math_utils.h>
 
 class Window;
 
 struct AABB {
-	float m_x;
-	float m_y;
+	float x;
+	float y;
 	float m_half_width;
 	float m_half_height;
-};
-
-struct Vector2 {
-	float m_x;
-	float m_y;
 };
 
 struct Hit {
