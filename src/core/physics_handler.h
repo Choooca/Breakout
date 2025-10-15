@@ -4,9 +4,11 @@
 
 class Entity;
 class MovingEntity;
+class PlayState;
+class Game;
 
 class PhysicHandler {
 public:
-	void ProcessPhysic(std::vector<std::shared_ptr<MovingEntity>> move_entities, std::vector<std::shared_ptr<Entity>>& all_entities);
+	void ProcessPhysic(const PlayState& state, const Game& game);
 	
 };

@@ -6,6 +6,10 @@
 #include <core/game.h>
 #include <graphics/background.h>
 #include <cstdlib>
+#include <entity/power_up.h>
+#include <entity/ball.h>
+
+std::shared_ptr<PowerUp> powerup;
 
 PlayState::PlayState(const Game& game) :
 	m_side_margin(54), m_top_margin(50),  m_n_brick_x(13), m_n_brick_y(13)
@@ -17,27 +21,10 @@ PlayState::PlayState(const Game& game) :
 	m_entity_factory->m_all_entities.back()->SetColor({255, 100, 255, 255});
 	m_entity_factory->m_all_entities.back()->SetPosition(400, 800);
 	m_entity_factory->m_all_entities.back()->SetSize(100, 20);
-	m_entity_factory->m_all_entities.back()->m_name = "Paddle";
 
 	m_entity_factory->CreateEntity(ENTITIES::ENTITY_BALL);
-	m_entity_factory->m_all_entities.back()->SetColor({ 100, 255, 255, 255 });
 	m_entity_factory->m_all_entities.back()->SetPosition(400, 700);
 	m_entity_factory->m_all_entities.back()->SetSize(14, 14);
-	m_entity_factory->m_all_entities.back()->m_name = "Ball";
-	m_entity_factory->m_all_entities.back()->SetTexture(game.m_ressource_loader->GetTexture("objects/ball.png"));
-
-	m_entity_factory->CreateEntity(ENTITIES::ENTITY_BALL);
-	m_entity_factory->m_all_entities.back()->SetColor({ 100, 255, 255, 255 });
-	m_entity_factory->m_all_entities.back()->SetPosition(400, 700);
-	m_entity_factory->m_all_entities.back()->SetSize(14, 14);
-	m_entity_factory->m_all_entities.back()->m_name = "Ball";
-	m_entity_factory->m_all_entities.back()->SetTexture(game.m_ressource_loader->GetTexture("objects/ball.png"));
-
-	m_entity_factory->CreateEntity(ENTITIES::ENTITY_BALL);
-	m_entity_factory->m_all_entities.back()->SetColor({ 100, 255, 255, 255 });
-	m_entity_factory->m_all_entities.back()->SetPosition(400, 700);
-	m_entity_factory->m_all_entities.back()->SetSize(14, 14);
-	m_entity_factory->m_all_entities.back()->m_name = "Ball";
 	m_entity_factory->m_all_entities.back()->SetTexture(game.m_ressource_loader->GetTexture("objects/ball.png"));
 
 	CreateWall(game);
@@ -70,14 +57,28 @@ void PlayState::Update(const Game& game) {
 	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
 		entity->Update(game, *this);
 
-	m_physics_handler->ProcessPhysic(m_entity_factory->m_moving_entities, m_entity_factory->m_all_entities);
+	m_physics_handler->ProcessPhysic(*this, game);
 
 	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
 		entity->Render(game.m_window);
 
+	DestroyQueue();
+}
+
+void PlayState::DestroyQueue() {
 	std::erase_if(m_entity_factory->m_all_entities,
 		[](const std::shared_ptr<Entity>& entity) {
 			return entity->m_should_be_free;
+		});
+
+	std::erase_if(m_entity_factory->m_moving_entities,
+		[](const std::weak_ptr<MovingEntity>& entity) {
+			return entity.expired(); 
+		});
+
+	std::erase_if(m_entity_factory->m_balls,
+		[](const std::weak_ptr<Ball>& entity) {
+			return entity.expired();
 		});
 
 }

@@ -1,12 +1,14 @@
 #pragma once
 #include <entity/entity.h>
 
+class EntityFactory;
+
 class Brick : public Entity {
 public:
 
 	Brick(float position_x, float position_y, float width, float height, Color color, std::string name, SDL_Texture* texture, bool indestrutible, int health_point);
 
-	void OnHit(Hit hit_result, std::weak_ptr<Entity> other_entity) override;
+	void OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity, const std::unique_ptr<EntityFactory>& entity_factory, const Game& game) override;
 
 private:
 	

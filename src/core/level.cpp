@@ -19,18 +19,38 @@ Level::Level(std::string level_path, const Game& game, const PlayState& state, c
 			c = level_string[i];
 		}
 
-		if (c == '0') continue;
+		switch (c)
+		{
+		case '0':
+			continue;
+		case '1':
 
-		entity_factory->CreateEntity(ENTITIES::ENTITY_BRICK);
-		entity_factory->m_all_entities.back()->SetColor({ 255, 255, 255, 255 });
-		entity_factory->m_all_entities.back()->SetPosition(
-			state.GetSideMargin() + (i % state.GetNXBrick()) * x_step + x_step * .5f,
-			(i / state.GetNYBrick()) * y_step + y_step * .5f + state.GetTopMargin()
-		);
+			entity_factory->CreateEntity(ENTITIES::ENTITY_BRICK);
+			entity_factory->m_all_entities.back()->SetColor({ 255, 255, 255, 255 });
+			entity_factory->m_all_entities.back()->SetPosition(
+				state.GetSideMargin() + (i % state.GetNXBrick()) * x_step + x_step * .5f,
+				(i / state.GetNYBrick()) * y_step + y_step * .5f + state.GetTopMargin()
+			);
+			entity_factory->m_all_entities.back()->SetSize(x_step, y_step);
+			entity_factory->m_all_entities.back()->SetTexture(game.m_ressource_loader->GetTexture("objects/brick1.png"));
+			break;
 
-		entity_factory->m_all_entities.back()->SetSize(x_step, y_step);
-		entity_factory->m_all_entities.back()->m_name = "Brick";
-		entity_factory->m_all_entities.back()->SetTexture(game.m_ressource_loader->GetTexture("objects/brick1.png"));
+		case '2':
+
+			entity_factory->CreateEntity(ENTITIES::ENTITY_WALL);
+			entity_factory->m_all_entities.back()->SetColor({ 100, 100, 100, 255 });
+			entity_factory->m_all_entities.back()->SetPosition(
+				state.GetSideMargin() + (i % state.GetNXBrick()) * x_step + x_step * .5f,
+				(i / state.GetNYBrick()) * y_step + y_step * .5f + state.GetTopMargin()
+			);
+			entity_factory->m_all_entities.back()->SetSize(x_step, y_step);
+			entity_factory->m_all_entities.back()->SetTexture(game.m_ressource_loader->GetTexture("objects/brick1.png"));
+			break;
+
+		default:
+			break;
+		}
+
 	}
 }
 

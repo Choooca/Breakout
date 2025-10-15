@@ -2,7 +2,8 @@
 #include <cmath>
 #include <iostream>
 #include <cstdlib>
-#include <cmath>
+#include <entity/entity_factory.h>
+#include <core/game.h>
 
 Brick::Brick(float position_x, float position_y, float width, float height, Color color, std::string name, SDL_Texture* texture, bool indestrutible, int health_point)
 	: Entity(position_x, position_y, width, height, color, name, texture),
@@ -11,7 +12,7 @@ Brick::Brick(float position_x, float position_y, float width, float height, Colo
 	m_collide_mask = EntityFlags::FLAG_BALL | EntityFlags::FLAG_PADDLE;
 }
 
-void Brick::OnHit(Hit hit_result, std::weak_ptr<Entity> other_entity) {
+void Brick::OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity, const std::unique_ptr<EntityFactory>& entity_factory, const Game& game) {
 	
 	if (m_indestrutible) return;
 
@@ -21,6 +22,17 @@ void Brick::OnHit(Hit hit_result, std::weak_ptr<Entity> other_entity) {
 	}
 	else
 	{
+		if (rand() % 6 == 0) {
+			std::shared_ptr<Entity> entity = entity_factory->CreateEntity(
+				ENTITY_POWERUP,
+				m_position_x,
+				m_position_y,
+				25,
+				25,
+				{ 255, 255, 255, 255 },
+				game.m_ressource_loader->GetTexture("objects/PowerUp.png")
+			);
+		}
 		DeathAnim(.2f);
 		m_colliding = false;
 	}

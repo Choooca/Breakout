@@ -1,6 +1,8 @@
 #include <entity/entity.h>
 #include <core/game.h>
 #include <graphics/window.h>
+#include "power_up.h"
+#include <iostream>
 
 Entity::Entity(float position_x, float position_y, float width, float height, Color color, std::string name, SDL_Texture* texture)
 	: m_position_x(position_x),

@@ -23,10 +23,11 @@ public :
 	inline int GetNXBrick() const { return m_n_brick_x; };
 	inline int GetNYBrick() const { return m_n_brick_y; };
 
-private:
 	std::unique_ptr<EntityFactory> m_entity_factory;
 	std::unique_ptr<PhysicHandler> m_physics_handler;
 	std::unique_ptr<Level> m_current_level;
+
+private:
 
 	std::vector<std::unique_ptr<ParallaxBackground>> m_all_backgrounds;
 
@@ -39,4 +40,5 @@ private:
 	int m_n_brick_y;
 
 	void CreateWall(const Game &game);
+	void DestroyQueue();
 };

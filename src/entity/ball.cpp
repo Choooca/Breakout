@@ -8,15 +8,20 @@
 #include <core/game.h>
 #include <core/input_handler.h>
 #include <state/play_state.h>
+#include <cstdlib>
 
 Ball::Ball(float position_x, float position_y, float width, float height, Color color, std::string name, float speed, SDL_Texture* texture)
 	: MovingEntity(position_x, position_y, width, height, color, name, speed, texture),
-	  m_dir_x(-1),
+	  m_dir_x(0),
 	  m_dir_y(1) {
 
 	trail_pos.fill({ -100, -100 });
 
 	UpdateTrail();
+
+	float length = std::sqrt(m_dir_x * m_dir_x + m_dir_y * m_dir_y);
+	m_dir_x /= length;
+	m_dir_y /= length;
 
 	m_flag = EntityFlags::FLAG_BALL;
 	m_collide_mask = EntityFlags::FLAG_BRICK | EntityFlags::FLAG_PADDLE;
@@ -46,14 +51,8 @@ void Ball::Update(const Game& game, const PlayState& state) {
 
 	if (m_position_y >= game.m_window->GetHeight() - m_height * .5f)
 	{
-		//Perdu
-		m_position_y = game.m_window->GetHeight() - m_height * .5f;
-		ReflectVector(m_dir_x, m_dir_y, 0.0f, -1.0f);
+		m_should_be_free = true;
 	}
-
-	float length = std::sqrt(m_dir_x * m_dir_x + m_dir_y * m_dir_y);
-	m_dir_x /= length;
-	m_dir_y /= length;
 
 	m_velocity_x = m_velocity_y = 0;
 
@@ -86,14 +85,26 @@ void Ball::Render(const std::unique_ptr<Window>& window) {
 	}
 }
 
-void Ball::OnHit(Hit hit_result, std::weak_ptr<Entity> other_entity) {
-
-	std::shared_ptr<Entity> entity = other_entity.lock();
-	if (!entity) return;
+void Ball::OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity, const std::unique_ptr<EntityFactory>& entity_factory, const Game& game) {
 
 	m_velocity_x *= hit_result.collision_time;
 	m_velocity_y *= hit_result.collision_time;
-	entity->ModifyBallDirection(m_dir_x, m_dir_y, hit_result);
+	other_entity->ModifyBallDirection(m_dir_x, m_dir_y, hit_result);
 
+	NormalizeDir();
+	
+}
+
+void Ball::SetRandomDir() {
+	m_dir_x =  (rand() % 10) - 5;
+	m_dir_y = - rand() % 5 - 1;
+
+	NormalizeDir();
+}
+
+void Ball::NormalizeDir() {
+	float length = std::sqrt(m_dir_x * m_dir_x + m_dir_y * m_dir_y);
+	m_dir_x /= length;
+	m_dir_y /= length;
 }
 

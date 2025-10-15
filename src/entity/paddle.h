@@ -15,7 +15,7 @@ public:
 
 	void ModifyBallDirection(float &dir_x, float &dir_y, const Hit& hit_result) override;
 
-	void OnHit(Hit hit_result, std::weak_ptr<Entity> other_entity) override;
+	void OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity, const std::unique_ptr<EntityFactory>& entity_factory, const Game& game) override;
 private:
 
 	float m_max_influence;

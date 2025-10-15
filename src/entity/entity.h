@@ -10,11 +10,13 @@ class Window;
 class Game;
 class Vector2;
 class PlayState;
+class EntityFactory;
 
 enum EntityFlags : uint32_t {
 	FLAG_BRICK = 1,
 	FLAG_PADDLE = 1 << 1,
-	FLAG_BALL = 1 << 2
+	FLAG_BALL = 1 << 2,
+	FLAG_POWERUP = 1 << 3
 };
 
 struct Color {
@@ -46,7 +48,7 @@ public:
 	virtual void Update(const Game& game, const PlayState& state);
 	virtual void Render(const std::unique_ptr<Window>& window);
 
-	virtual void OnHit(Hit hit_result, std::weak_ptr<Entity> other_entity) {};
+	virtual void OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity, const std::unique_ptr<EntityFactory>& entity_factory, const Game& game) {};
 
 	virtual void ModifyBallDirection(float &dir_x, float &dir_y, const Hit& hit_result);
 

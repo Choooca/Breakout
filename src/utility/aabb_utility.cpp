@@ -1,6 +1,7 @@
-#include "aabb_utility.h"
+﻿#include "aabb_utility.h"
 #include <graphics/window.h>
 #include <cmath>
+#include <iostream>
 
 bool PointCollideAABB(const Vector2 point, const AABB aabb) {
 	if (point.x > aabb.x - aabb.m_half_width &&
@@ -65,7 +66,6 @@ AABB MinkowskiDifference(const AABB a, const AABB b) {
 	return ret;
 }
 
-
 Hit SweepStaticMovingAABB(AABB moving_aabb, Vector2 velocity, AABB static_aabb) {
 	if (velocity.x == 0 && velocity.y == 0) {
 		return { 0 };
@@ -84,7 +84,8 @@ Hit SweepStaticMovingAABB(AABB moving_aabb, Vector2 velocity, AABB static_aabb) 
 		x_exit = (sum_aabb.x - sum_aabb.m_half_width) / velocity.x;
 	}
 	else {
-		if (std::abs(sum_aabb.x) > sum_aabb.m_half_width) return{ 0 };
+		if (std::abs(sum_aabb.x) >= sum_aabb.m_half_width)
+			return{ 0 };
 		x_entry = -INFINITY;
 		x_exit = INFINITY;
 	}
@@ -98,7 +99,7 @@ Hit SweepStaticMovingAABB(AABB moving_aabb, Vector2 velocity, AABB static_aabb) 
 		y_exit = (sum_aabb.y - sum_aabb.m_half_height) / velocity.y;
 	}
 	else {
-		if (std::abs(sum_aabb.y) > sum_aabb.m_half_height) return{ 0 };
+		if (std::abs(sum_aabb.y) >= sum_aabb.m_half_height) return{ 0 };
 		y_entry = -INFINITY;
 		y_exit = INFINITY;
 	}
@@ -106,10 +107,9 @@ Hit SweepStaticMovingAABB(AABB moving_aabb, Vector2 velocity, AABB static_aabb) 
 	float last_entry = std::max(x_entry, y_entry);
 	float first_exit = std::min(x_exit, y_exit);
 
-	if (last_entry >= first_exit ||
-		(x_entry <= 0 && y_entry <= 0) ||
-		last_entry >= 1 ||
-		last_entry <= 0) return { 0 };
+	if (last_entry >= first_exit || last_entry >= 1.0f || last_entry < 0.0f) {
+		return { 0 };
+	}
 
 	Vector2 normal;
 	if (x_entry > y_entry) {

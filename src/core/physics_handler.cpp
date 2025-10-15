@@ -4,23 +4,34 @@
 #include <windows.h>
 #include <entity/entity.h>
 #include <entity/moving_entity.h>
+#include <state/play_state.h>
+#include <core/game.h>
 
-void PhysicHandler::ProcessPhysic(std::vector<std::shared_ptr<MovingEntity>> move_entities, std::vector<std::shared_ptr<Entity>>& all_entities) {
+void PhysicHandler::ProcessPhysic(const PlayState& state, const Game &game) {
 	
+	std::vector<std::weak_ptr<MovingEntity>> move_entities = state.m_entity_factory->m_moving_entities;
+	std::vector<std::shared_ptr<Entity>>& all_entities = state.m_entity_factory->m_all_entities;
+
 	for (size_t i = 0; i < move_entities.size(); i++) {
 		
-		if (!move_entities[i]->GetColliding()) continue;
+		if (!move_entities[i].lock()) continue;
 
-		std::shared_ptr<MovingEntity> entity_a = move_entities[i];
+		std::shared_ptr<MovingEntity> entity_a = move_entities[i].lock();
+
+		if (!entity_a->GetColliding()) continue;
+
 
 		for (size_t j = i + 1; j < move_entities.size(); j++) {
 
-			if (!move_entities[j]->GetColliding()) continue;
+			if (!move_entities[j].lock()) continue;
 
-			if ((!(move_entities[i]->GetFlag() & move_entities[j]->GetCollisionMask())) &&
-				(!(move_entities[j]->GetFlag() & move_entities[i]->GetCollisionMask()))) continue;
+			std::shared_ptr<MovingEntity> entity_b = move_entities[j].lock();
 
-			std::shared_ptr<MovingEntity> entity_b = move_entities[j];
+			if (!entity_b->GetColliding()) continue;
+
+			if ((!(entity_a->GetFlag() & entity_b->GetCollisionMask())) &&
+				(!(entity_b->GetFlag() & entity_a->GetCollisionMask()))) continue;
+
 
 			Collision collision = SweepMovingAABB(
 				{ entity_a->GetXPos(), entity_a->GetYPos(), entity_a->GetWidth() * .5f, entity_a->GetHeight() * .5f },
@@ -30,14 +41,19 @@ void PhysicHandler::ProcessPhysic(std::vector<std::shared_ptr<MovingEntity>> mov
 			);
 
 			if (collision.hit) {
-				if(entity_b->GetFlag() & entity_a->GetCollisionMask()) entity_a->OnHit(collision.A, entity_b);
-				if (entity_a->GetFlag() & entity_b->GetCollisionMask()) entity_b->OnHit(collision.B, entity_a);
+				if (entity_b->GetFlag() & entity_a->GetCollisionMask()) entity_a->OnHit(collision.A, entity_b, state.m_entity_factory, game);
+				if (entity_a->GetFlag() & entity_b->GetCollisionMask()) entity_b->OnHit(collision.B, entity_a, state.m_entity_factory, game);
 			}
 		}
+
 	}
 
 
-	for (const std::shared_ptr<MovingEntity>& move_entity : move_entities) {
+	for (const std::weak_ptr<MovingEntity>& move_entity_weak : move_entities) {
+
+		if (!move_entity_weak.lock()) continue;
+
+		std::shared_ptr<MovingEntity> move_entity = move_entity_weak.lock();
 
 		if (!move_entity->GetColliding()) continue;
 
@@ -48,7 +64,7 @@ void PhysicHandler::ProcessPhysic(std::vector<std::shared_ptr<MovingEntity>> mov
 			if ((!(move_entity->GetFlag() & entity->GetCollisionMask())) &&
 				(!(entity->GetFlag() & move_entity->GetCollisionMask()))) continue;
 
-			if (std::find(move_entities.begin(), move_entities.end(), entity) != move_entities.end()) continue;
+			if (std::dynamic_pointer_cast<MovingEntity>(entity)) continue;
 
 			Collision collision = SweepMovingAABB(
 				{ move_entity->GetXPos(), move_entity->GetYPos(), move_entity->GetWidth() * .5f, move_entity->GetHeight() * .5f },
@@ -58,14 +74,18 @@ void PhysicHandler::ProcessPhysic(std::vector<std::shared_ptr<MovingEntity>> mov
 			);
 
 			if (collision.hit) {
-				if (entity->GetFlag() & move_entity->GetCollisionMask()) move_entity->OnHit(collision.A, entity);
-				if (move_entity->GetFlag() & entity->GetCollisionMask()) entity->OnHit(collision.B, move_entity);
+				if (entity->GetFlag() & move_entity->GetCollisionMask()) move_entity->OnHit(collision.A, entity, state.m_entity_factory, game);
+				if (move_entity->GetFlag() & entity->GetCollisionMask()) entity->OnHit(collision.B, move_entity, state.m_entity_factory, game);
 			}
 		}
 	}
 
 
-	for (const std::shared_ptr<MovingEntity>& move_entity : move_entities) {
+	for (const std::weak_ptr<MovingEntity>& move_entity_weak : move_entities) {
+
+		if (!move_entity_weak.lock()) continue;
+		std::shared_ptr<MovingEntity> move_entity = move_entity_weak.lock();
+
 		move_entity->SetPosition(
 			move_entity->GetXPos() + move_entity->GetXVelocity(),
 			move_entity->GetYPos() + move_entity->GetYVelocity());

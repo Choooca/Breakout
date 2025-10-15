@@ -12,7 +12,7 @@ Paddle::Paddle(float position_x, float position_y, float width, float height, Co
 	  m_max_influence(1.1f){
 
 	m_flag = EntityFlags::FLAG_PADDLE;
-	m_collide_mask = EntityFlags::FLAG_BRICK | EntityFlags::FLAG_BALL;
+	m_collide_mask = EntityFlags::FLAG_BRICK | EntityFlags::FLAG_BALL | EntityFlags::FLAG_POWERUP;
 
 }
 
@@ -22,8 +22,8 @@ void Paddle::Update(const Game& game, const PlayState& state) {
 	Input(game, state);
 }
 
-void Paddle::OnHit(Hit hit_result, std::weak_ptr<Entity> other_entity) {
-	if (!(other_entity.lock()->GetFlag() & FLAG_BALL)) return;
+void Paddle::OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity, const std::unique_ptr<EntityFactory>& entity_factory, const Game& game) {
+	if (!(other_entity->GetFlag() & FLAG_BALL)) return;
 	
 	HitAnim(.2f);
 }
@@ -62,9 +62,6 @@ void Paddle::Input(const Game& game, const PlayState& state) {
 void Paddle::ModifyBallDirection(float &dir_x, float &dir_y, const Hit& hit_result) {
 	float ratio = std::clamp((m_position_x - hit_result.collision_point.x) / m_width,-.5f,.5f) * 2.0f;
 	
-
-	if (std::abs(hit_result.normal.y) > 0.0f) {
-		dir_y = -1.0f;
-		dir_x -= ratio * m_max_influence;
-	}
+	dir_y = -1.0f;
+	dir_x = -ratio * m_max_influence;
 }
