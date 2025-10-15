@@ -21,7 +21,7 @@ Level::Level(std::string level_path, const Game& game, const PlayState& state, c
 
 		if (c == '0') continue;
 
-		entity_factory->CreateEntity(ENTITIES::BRICK);
+		entity_factory->CreateEntity(ENTITIES::ENTITY_BRICK);
 		entity_factory->m_all_entities.back()->SetColor({ 255, 255, 255, 255 });
 		entity_factory->m_all_entities.back()->SetPosition(
 			state.GetSideMargin() + (i % state.GetNXBrick()) * x_step + x_step * .5f,

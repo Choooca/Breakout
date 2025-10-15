@@ -17,6 +17,9 @@ void PhysicHandler::ProcessPhysic(std::vector<std::shared_ptr<MovingEntity>> mov
 
 			if (!move_entities[j]->GetColliding()) continue;
 
+			if ((!(move_entities[i]->GetFlag() & move_entities[j]->GetCollisionMask())) &&
+				(!(move_entities[j]->GetFlag() & move_entities[i]->GetCollisionMask()))) continue;
+
 			std::shared_ptr<MovingEntity> entity_b = move_entities[j];
 
 			Collision collision = SweepMovingAABB(
@@ -27,8 +30,8 @@ void PhysicHandler::ProcessPhysic(std::vector<std::shared_ptr<MovingEntity>> mov
 			);
 
 			if (collision.hit) {
-				entity_a->OnHit(collision.A, entity_b);
-				entity_b->OnHit(collision.B, entity_a);
+				if(entity_b->GetFlag() & entity_a->GetCollisionMask()) entity_a->OnHit(collision.A, entity_b);
+				if (entity_a->GetFlag() & entity_b->GetCollisionMask()) entity_b->OnHit(collision.B, entity_a);
 			}
 		}
 	}
@@ -42,6 +45,9 @@ void PhysicHandler::ProcessPhysic(std::vector<std::shared_ptr<MovingEntity>> mov
 
 			if (!entity->GetColliding()) continue;
 
+			if ((!(move_entity->GetFlag() & entity->GetCollisionMask())) &&
+				(!(entity->GetFlag() & move_entity->GetCollisionMask()))) continue;
+
 			if (std::find(move_entities.begin(), move_entities.end(), entity) != move_entities.end()) continue;
 
 			Collision collision = SweepMovingAABB(
@@ -52,8 +58,8 @@ void PhysicHandler::ProcessPhysic(std::vector<std::shared_ptr<MovingEntity>> mov
 			);
 
 			if (collision.hit) {
-				move_entity->OnHit(collision.A, entity);
-				entity->OnHit(collision.B, move_entity);
+				if (entity->GetFlag() & move_entity->GetCollisionMask()) move_entity->OnHit(collision.A, entity);
+				if (move_entity->GetFlag() & entity->GetCollisionMask()) entity->OnHit(collision.B, move_entity);
 			}
 		}
 	}

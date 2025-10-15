@@ -4,6 +4,13 @@
 #include <entity/entity.h>
 #include <SDL3/SDL.h>
 
+enum ENTITIES {
+	ENTITY_PADDLE,
+	ENTITY_BALL,
+	ENTITY_BRICK,
+	ENTITY_WALL
+};
+
 class MovingEntity;
 
 class EntityFactory {

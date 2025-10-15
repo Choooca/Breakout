@@ -18,6 +18,8 @@ Ball::Ball(float position_x, float position_y, float width, float height, Color 
 
 	UpdateTrail();
 
+	m_flag = EntityFlags::FLAG_BALL;
+	m_collide_mask = EntityFlags::FLAG_BRICK | EntityFlags::FLAG_PADDLE;
 }
 
 void Ball::UpdateTrail() {

@@ -11,11 +11,10 @@ class Game;
 class Vector2;
 class PlayState;
 
-enum ENTITIES {
-	PADDLE,
-	BALL,
-	BRICK,
-	WALL
+enum EntityFlags : uint32_t {
+	FLAG_BRICK = 1,
+	FLAG_PADDLE = 1 << 1,
+	FLAG_BALL = 1 << 2
 };
 
 struct Color {
@@ -38,6 +37,9 @@ public:
 	inline float GetYPos() const { return m_position_y; };
 	inline float GetWidth() const { return m_width; };
 	inline float GetHeight() const { return m_height; };
+
+	inline uint32_t GetFlag() const { return m_flag; };
+	inline uint32_t GetCollisionMask() const { return m_collide_mask; };
 
 	inline bool GetColliding() const { return m_colliding; };
 
@@ -63,6 +65,9 @@ protected:
 
 	float m_width;
 	float m_height;
+
+	uint32_t m_flag;
+	uint32_t m_collide_mask;
 
 	Color m_color;
 

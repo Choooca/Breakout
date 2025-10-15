@@ -9,7 +9,12 @@
 
 Paddle::Paddle(float position_x, float position_y, float width, float height, Color color, std::string name, float speed, SDL_Texture* texture)
 	: MovingEntity(position_x, position_y, width, height, color, name, speed, texture),
-	  m_max_influence(1.1f){}
+	  m_max_influence(1.1f){
+
+	m_flag = EntityFlags::FLAG_PADDLE;
+	m_collide_mask = EntityFlags::FLAG_BRICK | EntityFlags::FLAG_BALL;
+
+}
 
 
 void Paddle::Update(const Game& game, const PlayState& state) {
@@ -18,6 +23,8 @@ void Paddle::Update(const Game& game, const PlayState& state) {
 }
 
 void Paddle::OnHit(Hit hit_result, std::weak_ptr<Entity> other_entity) {
+	if (!(other_entity.lock()->GetFlag() & FLAG_BALL)) return;
+	
 	HitAnim(.2f);
 }
 
@@ -34,7 +41,6 @@ void Paddle::HitAnim(float duration) {
 		m_render_offset_y = std::sin(3.1415 * (m_elapsed / duration)) * 20.0f;
 		return true;
 		});
-
 }
 
 void Paddle::Input(const Game& game, const PlayState& state) {
