@@ -19,18 +19,11 @@ enum EntityFlags : uint32_t {
 	FLAG_POWERUP = 1 << 3
 };
 
-struct Color {
-	float red;
-	float green;
-	float blue;
-	float alpha;
-};
-
 class Entity {
 public:
-	Entity(float position_x, float position_y, float width, float height, Color color, std::string name, SDL_Texture* texture);
+	Entity(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, SDL_Texture* texture);
 
-	void SetColor(Color color);
+	void SetColor(SDL_Color color);
 	void SetPosition(float x, float y);
 	void SetSize(float width, float height);
 	void SetTexture(SDL_Texture* texture);
@@ -71,7 +64,7 @@ protected:
 	uint32_t m_flag;
 	uint32_t m_collide_mask;
 
-	Color m_color;
+	SDL_Color m_color;
 
 	float m_elapsed;
 

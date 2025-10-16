@@ -51,6 +51,9 @@ private:
 	void DestroyQueue();
 	void CheckWinCondition(Game& game);
 
+	void SetModeStart(Game& game);
+	void UpdateStart(Game& game);
+
 	void SetModePlay(Game& game);
 	void UpdatePlay(Game& game);
 

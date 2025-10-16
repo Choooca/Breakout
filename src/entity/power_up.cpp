@@ -5,7 +5,7 @@
 #include <entity/ball.h>
 #include <cstdlib>
 
-PowerUp::PowerUp(float position_x, float position_y, float width, float height, Color color, std::string name, float speed, SDL_Texture* texture)
+PowerUp::PowerUp(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, float speed, SDL_Texture* texture)
 	: MovingEntity(position_x, position_y, width, height, color, name, speed, texture) {
 	m_flag = EntityFlags::FLAG_POWERUP;
 	m_collide_mask = EntityFlags::FLAG_PADDLE;

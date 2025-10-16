@@ -17,7 +17,29 @@ PlayState::PlayState(Game& game, std::string level_string_path) :
 	m_physics_handler = std::make_unique<PhysicHandler>();
 	m_coroutines = std::make_unique<CoroutineManager>();
 
-	SetModePlay(game);
+	SetModeStart(game);
+}
+
+void PlayState::SetModeStart(Game& game) {
+	float elapsed;
+	float duration;
+
+	m_current_update = &PlayState::UpdateLose;
+
+	m_coroutines->Start([this, elapsed = 0.0, duration = 2.0f, &game](float delta_time) mutable {
+		elapsed += delta_time;
+
+		if (elapsed >= duration) {
+			SetModePlay(game);
+			return false;
+		}
+
+		return true;
+		});
+}
+
+void PlayState::UpdateStart(Game& game) {
+
 }
 
 void PlayState::SetModePlay(Game& game) {

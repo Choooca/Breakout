@@ -10,7 +10,7 @@
 #include <state/play_state.h>
 #include <cstdlib>
 
-Ball::Ball(float position_x, float position_y, float width, float height, Color color, std::string name, float speed, SDL_Texture* texture)
+Ball::Ball(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, float speed, SDL_Texture* texture)
 	: MovingEntity(position_x, position_y, width, height, color, name, speed, texture),
 	  m_dir_x(0),
 	  m_dir_y(1) {
@@ -66,19 +66,19 @@ void Ball::Render(const std::unique_ptr<Window>& window) {
 	for (int i = 0; i < trail_pos.size(); i++) {
 
 		float factor = std::lerp(1.0f, 0.0f, (i + 1.0f) / (trail_pos.size() + 1));
-		float alpha = m_color.alpha * factor;
+		float alpha = m_color.a * factor;
 		float width = m_width * factor;
 		float height = m_height * factor;
 
 		if (!m_texture) {
-			SDL_SetRenderDrawColor(window->GetRenderer(), m_color.red, m_color.green, m_color.blue, m_color.alpha);
+			SDL_SetRenderDrawColor(window->GetRenderer(), m_color.r, m_color.g, m_color.b, m_color.a);
 			SDL_FRect paddle_rect = { trail_pos[i].x - width * .5f,  trail_pos[i].y - height * .5f, width, height };
 			SDL_RenderFillRect(window->GetRenderer(), &paddle_rect);
 			return;
 		}
 
 		SDL_SetTextureAlphaMod(m_texture, alpha);
-		SDL_SetTextureColorMod(m_texture, m_color.red, m_color.green, m_color.blue);
+		SDL_SetTextureColorMod(m_texture, m_color.r, m_color.g, m_color.b);
 		SDL_FRect rect = { trail_pos[i].x - width * .5f + m_render_offset_x, trail_pos[i].y - height * .5f + m_render_offset_y, width, height };
 		SDL_RenderTexture(window->GetRenderer(), m_texture, nullptr, &rect);
 

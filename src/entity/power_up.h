@@ -3,7 +3,7 @@
 
 class PowerUp : public MovingEntity {
 public:
-	PowerUp(float position_x, float position_y, float width, float height, Color color, std::string name, float speed, SDL_Texture* texture);
+	PowerUp(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, float speed, SDL_Texture* texture);
 
 	void Update(const Game& game, const PlayState& state) override;
 

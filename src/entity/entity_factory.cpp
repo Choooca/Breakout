@@ -9,7 +9,7 @@ std::shared_ptr<Entity> EntityFactory::CreateEntity(ENTITIES entity_type) {
 	return CreateEntity(entity_type, 0.0f, 0.0f, 10.0f, 10.0f, { 255, 255, 255, 255 }, nullptr);
 }
 
-std::shared_ptr<Entity> EntityFactory::CreateEntity(ENTITIES entity_type, float position_x, float position_y, float width, float height, Color color, SDL_Texture* texture) {
+std::shared_ptr<Entity> EntityFactory::CreateEntity(ENTITIES entity_type, float position_x, float position_y, float width, float height, SDL_Color color, SDL_Texture* texture) {
 
 	switch (entity_type)
 	{

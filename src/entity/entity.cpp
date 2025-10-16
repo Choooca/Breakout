@@ -4,7 +4,7 @@
 #include "power_up.h"
 #include <iostream>
 
-Entity::Entity(float position_x, float position_y, float width, float height, Color color, std::string name, SDL_Texture* texture)
+Entity::Entity(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, SDL_Texture* texture)
 	: m_position_x(position_x),
 	  m_position_y(position_y),
 	  m_width(width),
@@ -23,7 +23,7 @@ void Entity::Update(const Game& game, const PlayState& state) {
 	m_coroutines->Update(game.m_input_handler->GetDeltaTime());
 }
 
-void Entity::SetColor(Color color) {
+void Entity::SetColor(SDL_Color color) {
 	m_color = color;
 }
 
@@ -48,14 +48,14 @@ void Entity::Render(const std::unique_ptr<Window>& window) {
 	};
 
 	if (!m_texture) {
-		SDL_SetRenderDrawColor(window->GetRenderer(), m_color.red, m_color.green, m_color.blue, m_color.alpha);
+		SDL_SetRenderDrawColor(window->GetRenderer(), m_color.r, m_color.g, m_color.b, m_color.a);
 		SDL_FRect paddle_rect = { position.x, position.y, m_width, m_height };
 		SDL_RenderFillRect(window->GetRenderer(), &paddle_rect);
 		return;
 	}
 	
-	SDL_SetTextureAlphaMod(m_texture, m_color.alpha);
-	SDL_SetTextureColorMod(m_texture, m_color.red, m_color.green, m_color.blue);
+	SDL_SetTextureAlphaMod(m_texture, m_color.a);
+	SDL_SetTextureColorMod(m_texture, m_color.r, m_color.g, m_color.b);
 	SDL_FRect rect = { position.x, position.y, m_width, m_height };
 	SDL_RenderTexture(window->GetRenderer(), m_texture, nullptr, &rect);
 }

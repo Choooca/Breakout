@@ -4,6 +4,7 @@
 #include <graphics/ressource_loader.h>
 #include <core/input_handler.h>
 #include <graphics/window.h>
+#include <graphics/text_renderer.h>
 
 class Game {
 public:
@@ -16,6 +17,7 @@ public:
 	std::unique_ptr<Window> m_window;
 	std::unique_ptr<InputHandler> m_input_handler;
 	std::unique_ptr<RessourceLoader> m_ressource_loader;
+	std::unique_ptr<TextRenderer> m_text_renderer;
 
 private:
 

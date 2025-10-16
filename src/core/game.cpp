@@ -8,6 +8,7 @@ Game::Game() {
 	m_window = std::make_unique<Window>();
 	m_input_handler = std::make_unique<InputHandler>(m_window->GetWindow());
 	m_ressource_loader = std::make_unique<RessourceLoader>(m_window->GetRenderer());
+	m_text_renderer = std::make_unique<TextRenderer>();
 }
 
 void Game::Run() {
@@ -18,6 +19,8 @@ void Game::Run() {
 		m_input_handler->Update();
 
 		m_window->RenderBegin();
+
+		m_text_renderer->RenderText(m_window->GetRenderer(), "Test", 500, 500);
 
 		m_current_state->Update(*this);
 		

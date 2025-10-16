@@ -1,6 +1,7 @@
 set(GRAPHICS_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/window.cpp	
 	${CMAKE_CURRENT_SOURCE_DIR}/ressource_loader.cpp	
+	${CMAKE_CURRENT_SOURCE_DIR}/text_renderer.cpp	
 	${CMAKE_CURRENT_SOURCE_DIR}/background.cpp	
 	${CMAKE_CURRENT_SOURCE_DIR}/parallax_background.cpp
 

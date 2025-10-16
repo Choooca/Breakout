@@ -5,7 +5,7 @@
 #include <entity/entity_factory.h>
 #include <core/game.h>
 
-Brick::Brick(float position_x, float position_y, float width, float height, Color color, std::string name, SDL_Texture* texture, bool indestrutible, int health_point)
+Brick::Brick(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, SDL_Texture* texture, bool indestrutible, int health_point)
 	: Entity(position_x, position_y, width, height, color, name, texture),
 	  m_indestrutible(indestrutible), m_health_point(health_point){
 	m_flag = EntityFlags::FLAG_BRICK;
