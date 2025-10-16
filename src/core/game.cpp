@@ -12,7 +12,7 @@ Game::Game() {
 
 void Game::Run() {
 
-	ChangeState(new PlayState(*this));
+	ChangeState(new PlayState(*this, "level1.txt"));
 
 	while (!m_input_handler->m_quit) {
 		m_input_handler->Update();

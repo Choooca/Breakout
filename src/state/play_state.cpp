@@ -8,17 +8,19 @@
 #include <cstdlib>
 #include <entity/power_up.h>
 #include <entity/ball.h>
+#include <iostream>
 
-PlayState::PlayState(const Game& game) :
-	m_side_margin(54), m_top_margin(50),  m_n_brick_x(13), m_n_brick_y(13)
+PlayState::PlayState(Game& game, std::string level_string_path) : 
+	m_level_string_path(level_string_path), m_side_margin(54), m_top_margin(50),  m_n_brick_x(13), m_n_brick_y(13), m_should_change_level(false)
 {
 	m_entity_factory = std::make_unique<EntityFactory>();
 	m_physics_handler = std::make_unique<PhysicHandler>();
+	m_coroutines = std::make_unique<CoroutineManager>();
 
 	SetModePlay(game);
 }
 
-void PlayState::SetModePlay(const Game& game) {
+void PlayState::SetModePlay(Game& game) {
 
 	m_entity_factory->Clear();
 
@@ -34,12 +36,12 @@ void PlayState::SetModePlay(const Game& game) {
 
 	CreateWall(game);
 
-	m_current_level = std::make_unique<Level>("level1.txt", game, *this, m_entity_factory);
+	m_current_level = std::make_unique<Level>(m_level_string_path, game, *this, m_entity_factory);
 
 	m_current_update = &PlayState::UpdatePlay;
 }
 
-void PlayState::UpdatePlay(const Game& game) {
+void PlayState::UpdatePlay(Game& game) {
 	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
 		entity->Update(game, *this);
 
@@ -50,21 +52,71 @@ void PlayState::UpdatePlay(const Game& game) {
 
 	DestroyQueue();
 
-	CheckWinCondition();
+	CheckWinCondition(game);
 }
 
-void PlayState::SetModeLose(const Game& game) {
+void PlayState::SetModeLose(Game& game) {
+	float elapsed;
+	float duration;
+
+	m_current_update = &PlayState::UpdateLose;
+
+	m_coroutines->Start([this, elapsed = 0.0, duration = 2.0f, &game](float delta_time) mutable {
+		elapsed += delta_time;
+
+		if (elapsed >= duration) {
+			m_should_change_level = true;
+			return false;
+		}
+
+		return true;
+		});
+}
+void PlayState::UpdateLose(Game& game) {
+	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
+		entity->Render(game.m_window);
+
+	if (m_coroutines == nullptr) return;
+
+	m_coroutines->Update(game.m_input_handler->GetDeltaTime());
+	
+	if(m_should_change_level)
+		game.ChangeState(new PlayState(game, "level1.txt"));
 
 }
-void PlayState::UpdateLose(const Game& game) {
+
+void PlayState::SetModeWin(Game& game) {
+	float elapsed;
+	float duration;
+
+	m_current_update = &PlayState::UpdateWin;
+
+	m_coroutines->Start([this, elapsed = 0.0, duration = 2.0f, &game](float delta_time) mutable {
+		elapsed += delta_time;
+
+		std::cout << elapsed;
+
+		if (elapsed >= duration) {
+			this->m_current_update = nullptr;
+			m_should_change_level = true;
+			return false;
+		}
+
+		return true;
+		});
 
 }
+void PlayState::UpdateWin(Game& game) {
 
-void PlayState::SetModeWin(const Game& game) {
+	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
+		entity->Render(game.m_window);
 
-}
-void PlayState::UpdateWin(const Game& game) {
+	if (m_coroutines == nullptr) return;
 
+	m_coroutines->Update(game.m_input_handler->GetDeltaTime());
+
+	if (m_should_change_level)
+		game.ChangeState(new PlayState(game, "level2.txt"));
 }
 
 void PlayState::CreateWall(const Game &game) {
@@ -87,7 +139,7 @@ void PlayState::CreateWall(const Game &game) {
 	m_entity_factory->m_all_entities.back()->m_name = "Wall";
 }
 
-void PlayState::Update(const Game& game) {
+void PlayState::Update(Game& game) {
 	if (m_current_update) (this->*m_current_update)(game);
 	
 }
@@ -115,13 +167,13 @@ void PlayState::DestroyQueue() {
 
 }
 
-void PlayState::CheckWinCondition() {
+void PlayState::CheckWinCondition(Game &game) {
 	if (m_entity_factory->m_bricks.size() == 0) {
-		//win
+		SetModeWin(game);
 		return;
 	}
 
 	if (m_entity_factory->m_balls.size() == 0) {
-		//lose
+		SetModeLose(game);
 	}
 }

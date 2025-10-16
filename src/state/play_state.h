@@ -14,9 +14,9 @@ class RessourceLoader;
 
 class PlayState : public GameState {
 public :
-	PlayState(const Game& game);
+	PlayState(Game& game, std::string level_string_path);
 
-	void Update(const Game &game) override;
+	void Update(Game &game) override;
 	
 	inline float GetSideMargin() const { return m_side_margin; };
 	inline float GetTopMargin() const { return m_top_margin; };
@@ -29,7 +29,7 @@ public :
 
 private:
 
-	void (PlayState::*m_current_update)(const Game& game) = nullptr;
+	void (PlayState::*m_current_update)(Game& game) = nullptr;
 
 	std::vector<std::unique_ptr<ParallaxBackground>> m_all_backgrounds;
 
@@ -41,16 +41,22 @@ private:
 	int m_n_brick_x;
 	int m_n_brick_y;
 
+	bool m_should_change_level;
+
+	std::string m_level_string_path;
+
+	std::unique_ptr<CoroutineManager> m_coroutines;
+
 	void CreateWall(const Game &game);
 	void DestroyQueue();
-	void CheckWinCondition();
+	void CheckWinCondition(Game& game);
 
-	void SetModePlay(const Game& game);
-	void UpdatePlay(const Game& game);
+	void SetModePlay(Game& game);
+	void UpdatePlay(Game& game);
 
-	void SetModeLose(const Game& game);
-	void UpdateLose(const Game& game);
+	void SetModeLose(Game& game);
+	void UpdateLose(Game& game);
 
-	void SetModeWin(const Game& game);
-	void UpdateWin(const Game& game);
+	void SetModeWin(Game& game);
+	void UpdateWin(Game& game);
 };
