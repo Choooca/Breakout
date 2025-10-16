@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <graphics/window.h>
 #include <state/play_state.h>
+#include <vector>
 
 Paddle::Paddle(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, float speed, SDL_Texture* texture)
 	: MovingEntity(position_x, position_y, width, height, color, name, speed, texture),
@@ -25,9 +26,11 @@ void Paddle::Update(const std::unique_ptr<InputHandler>& input_handler, int wind
 void Paddle::OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity) {
 	MovingEntity::OnHit(hit_result, other_entity);
 
-	if (!(other_entity->GetFlag() & FLAG_BALL)) return;
+	if ((other_entity->GetFlag() & FLAG_BALL) ) {
+
+		m_colliding_balls[other_entity] = other_entity->GetXPos() - m_position_x;;
+	}
 	
-	HitAnim(.2f);
 }
 
 void Paddle::HitAnim(float duration) {
@@ -47,7 +50,7 @@ void Paddle::HitAnim(float duration) {
 
 void Paddle::Input(const std::unique_ptr<InputHandler>& input_handler) {
 	m_velocity_x = 0;
-	
+
 	if (input_handler->GetKey(SDLK_Q)) {
 		m_velocity_x = -m_speed * input_handler->GetDeltaTime();
 	}
@@ -55,6 +58,26 @@ void Paddle::Input(const std::unique_ptr<InputHandler>& input_handler) {
 	if (input_handler->GetKey(SDLK_D)) {
 		m_velocity_x = m_speed * input_handler->GetDeltaTime();
 	} 
+
+
+	std::erase_if(m_colliding_balls, [&](auto& kv) {
+		std::shared_ptr<Entity> ball = kv.first.lock();
+		if (!ball) return true;
+
+		if (input_handler->GetKey(SDLK_SPACE)) {
+			ball->SetUpdateEnable(false);
+			ball->SetPosition(
+				m_position_x + kv.second,
+				m_position_y - m_height * .5f - ball->GetHeight() * .5f
+			);
+			return false;
+		}
+		else {
+			ball->SetUpdateEnable(true);
+			HitAnim(.2f);
+			return true;
+		}
+		});
 }
 
 void Paddle::Render(const std::unique_ptr<Window>& window) {

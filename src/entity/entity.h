@@ -34,12 +34,16 @@ public:
 	inline float GetWidth() const { return m_width; };
 	inline float GetHeight() const { return m_height; };
 
+	inline bool GetUpdateEnable() { return m_update_enable; }
+	virtual void SetUpdateEnable(bool is_enable);
+
 	inline uint32_t GetFlag() const { return m_flag; };
 	inline uint32_t GetCollisionMask() const { return m_collide_mask; };
 
 	inline bool GetColliding() const { return m_colliding; };
 
 	virtual void Update(const std::unique_ptr<InputHandler>& input_handler, int window_height);
+	void UpdateCoroutine(const std::unique_ptr<InputHandler>& input_handler);
 	virtual void Render(const std::unique_ptr<Window>& window);
 
 	virtual void OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity) {};
@@ -53,6 +57,9 @@ public:
 	std::unique_ptr<CoroutineManager> m_coroutines;
 
 protected:
+	
+	bool m_update_enable;
+
 	float m_position_x;
 	float m_position_y;
 

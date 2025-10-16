@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <entity/moving_entity.h>
+#include <map>
 
 class PlayState;
 class Entity;
@@ -18,6 +19,8 @@ public:
 	void Render(const std::unique_ptr<Window>& window) override;
 	void OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity) override;
 private:
+
+	std::map < std::weak_ptr<Entity>, float, std::owner_less<std::weak_ptr<Entity>>> m_colliding_balls;
 
 	float m_max_influence;
 

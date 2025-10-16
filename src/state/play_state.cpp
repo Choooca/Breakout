@@ -172,8 +172,10 @@ void PlayState::SetModePlay() {
 }
 
 void PlayState::UpdatePlay() {
-	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
-		entity->Update(m_game.m_input_handler, m_game.m_window->GetHeight());
+	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities) {
+		entity->UpdateCoroutine(m_game.m_input_handler);
+		if(entity->GetUpdateEnable()) entity->Update(m_game.m_input_handler, m_game.m_window->GetHeight());
+	}
 
 	m_physics_handler->ProcessPhysic(m_entity_factory->m_moving_entities, m_entity_factory->m_all_entities);
 
@@ -215,6 +217,9 @@ void PlayState::UpdateLose() {
 void PlayState::SetModeWin() {
 	float elapsed;
 	float duration;
+
+	m_total_score += m_current_level_score;
+	m_current_level_score = 0;
 
 	m_current_update = &PlayState::UpdateWin;
 
@@ -280,6 +285,7 @@ void PlayState::CheckWinCondition() {
 }
 
 void PlayState::RestartLevel() {
+	m_current_level_score = 0;
 	m_entity_factory->Clear();
 	SetModeStart();
 }

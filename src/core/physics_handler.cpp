@@ -85,6 +85,7 @@ void PhysicHandler::ProcessPhysic(std::vector<std::weak_ptr<MovingEntity>> move_
 
 		move_entity->SetPosition(
 			move_entity->GetXPos() + move_entity->GetXVelocity(),
-			move_entity->GetYPos() + move_entity->GetYVelocity());
+			move_entity->GetYPos() + move_entity->GetYVelocity()
+		);
 	}
 }

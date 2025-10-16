@@ -11,3 +11,12 @@ void MovingEntity::OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity) {
 	m_velocity_x *= hit_result.collision_time;
 	m_velocity_y *= hit_result.collision_time;
 }
+
+void MovingEntity::SetUpdateEnable(bool is_enable) {
+	Entity::SetUpdateEnable(is_enable);
+
+	if (!is_enable) {
+		m_velocity_x = 0;
+		m_velocity_y = 0;
+	}
+}

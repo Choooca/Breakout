@@ -16,11 +16,18 @@ Entity::Entity(float position_x, float position_y, float width, float height, SD
 	  m_texture(texture),
 	  m_colliding(true),
 	  m_render_offset_x(0),
-	  m_render_offset_y(0){
+	  m_render_offset_y(0),
+	  m_update_enable(true){
 	m_coroutines = std::make_unique<CoroutineManager>();
 }
 
-void Entity::Update(const std::unique_ptr<InputHandler>& input_handler, int window_height) {
+void Entity::SetUpdateEnable(bool is_enable) {
+	m_update_enable = is_enable;
+}
+
+void Entity::Update(const std::unique_ptr<InputHandler>& input_handler, int window_height) {}
+
+void Entity::UpdateCoroutine(const std::unique_ptr<InputHandler>& input_handler) {
 	m_coroutines->Update(input_handler->GetDeltaTime());
 }
 

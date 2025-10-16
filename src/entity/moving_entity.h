@@ -12,6 +12,8 @@ public:
 
 	void OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity) override;
 
+	void SetUpdateEnable(bool is_enable) override;
+
 protected:
 
 	float m_speed;
