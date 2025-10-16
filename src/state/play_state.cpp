@@ -9,192 +9,239 @@
 #include <entity/power_up.h>
 #include <entity/ball.h>
 #include <iostream>
+#include <core/game_event.h>
 
-PlayState::PlayState(Game& game, std::string level_string_path) : 
-	m_level_string_path(level_string_path), m_side_margin(54), m_top_margin(50),  m_n_brick_x(13), m_n_brick_y(13), m_should_change_level(false)
+PlayState::PlayState(Game& game) :
+	m_game(game),
+	m_side_margin(54),
+	m_top_margin(50),
+	m_n_brick_x(13),
+	m_n_brick_y(13),
+	m_current_level_index(0),
+	m_current_level_score(0),
+	m_total_score(0)
 {
 	m_entity_factory = std::make_unique<EntityFactory>();
 	m_physics_handler = std::make_unique<PhysicHandler>();
 	m_coroutines = std::make_unique<CoroutineManager>();
 
-	SetModeStart(game);
+	InitListener();
+
+	SetModeStart();
 }
 
-void PlayState::SetModeStart(Game& game) {
+PlayState::~PlayState() {
+	GameEvents::Get().ClearAll();
+}
+
+void PlayState::InitListener() {
+
+	GameEvents::Get().OnPowerUpCollected.Subscribe(
+		[this]() {
+			std::shared_ptr<Ball> spawn_ball = m_entity_factory->m_balls[rand() % m_entity_factory->m_balls.size()].lock();
+
+			if (!spawn_ball) return;
+
+			m_entity_factory->CreateEntity(ENTITY_BALL);
+			std::shared_ptr<Ball> ball = m_entity_factory->m_balls.back().lock();
+			ball->SetPosition(spawn_ball->GetXPos(), spawn_ball->GetYPos());
+			ball->SetSize(14, 14);
+			ball->SetRandomDir();
+			ball->SetTexture(m_game.m_ressource_loader->GetTexture("objects/ball.png"));
+		}
+	);
+
+	GameEvents::Get().OnHitBrick.Subscribe(
+		[this](int score) {
+			m_current_level_score += score;
+		}
+	);
+
+	GameEvents::Get().OnBrickDestroyed.Subscribe(
+		[this](int score, Vector2 position) {
+
+			m_current_level_score += score;
+
+			if (rand() % 6 == 0) {
+				m_entity_factory->CreateEntity(
+					ENTITY_POWERUP,
+					position.x,
+					position.y,
+					25,
+					25,
+					{ 255, 255, 255, 255 },
+					m_game.m_ressource_loader->GetTexture("objects/PowerUp.png")
+				);
+			}
+		}
+	);
+}
+
+void PlayState::RenderScore(Vector2 position, float size, size_t n_zero) {
+	TextStyle style;
+	style.font_size = size;
+
+	std::string score_string = std::to_string(m_current_level_score + m_total_score);
+	score_string = std::string(n_zero - std::min(n_zero, score_string.length()), '0') + score_string;
+	std::string text = "Score : " + score_string;
+
+	m_game.m_text_renderer->RenderText(
+		text,
+		position.x,
+		position.y,
+		style);
+}
+
+#pragma region StateMachine
+
+void PlayState::SetModeStart() {
+	m_entity_factory->Clear();
+
 	float elapsed;
 	float duration;
 
 	m_current_update = &PlayState::UpdateStart;
 
-	m_current_level = std::make_unique<Level>(m_level_string_path);
+	m_current_level = std::make_unique<Level>(m_current_level_index);
 
-	m_coroutines->Start([this, elapsed = 0.0, duration = 2.0f, &game](float delta_time) mutable {
+	m_coroutines->Start([this, elapsed = 0.0, duration = 2.0f](float delta_time) mutable {
 		elapsed += delta_time;
 
 		if (elapsed >= duration) {
-			SetModeWaitUntilInput(game);
-			return false;
+			SetModeWaitUntilInput();
+			return true;
 		}
 
-		return true;
+		return false;
 		});
 }
 
-void PlayState::UpdateStart(Game& game) {
+void PlayState::UpdateStart() {
 	TextStyle style;
 	style.font_size = 100;
 
-	game.m_text_renderer->RenderText(
-		game.m_window->GetRenderer(),
+	m_game.m_text_renderer->RenderText(
 		m_current_level->GetName(),
-		game.m_window->GetWidth() * .5f,
-		game.m_window->GetHeight() * .5f,
+		m_game.m_window->GetWidth() * .5f,
+		m_game.m_window->GetHeight() * .5f,
 		style);
 
-	game.m_score_handler->RenderScore(game, { game.m_window->GetWidth() * .5f , 300}, 50);
+	RenderScore({ m_game.m_window->GetWidth() * .5f , 300}, 50);
 
-	m_coroutines->Update(game.m_input_handler->GetDeltaTime());
+	m_coroutines->Update(m_game.m_input_handler->GetDeltaTime());
 }
 
-void PlayState::SetModeWaitUntilInput(Game& game) {
-	m_entity_factory->Clear();
-
-	m_paddle = m_entity_factory->CreateEntity(ENTITIES::ENTITY_PADDLE);
+void PlayState::SetModeWaitUntilInput() {
+	m_entity_factory->CreateEntity(ENTITIES::ENTITY_PADDLE);
 	m_entity_factory->m_all_entities.back()->SetColor({ 255, 100, 255, 255 });
-	m_entity_factory->m_all_entities.back()->SetPosition(game.m_window->GetWidth() * .5f, 800);
+	m_entity_factory->m_all_entities.back()->SetPosition(m_game.m_window->GetWidth() * .5f, 800);
 	m_entity_factory->m_all_entities.back()->SetSize(100, 20);
 
 	m_entity_factory->CreateEntity(ENTITIES::ENTITY_BALL);
-	m_entity_factory->m_all_entities.back()->SetPosition(game.m_window->GetWidth() * .5f, 700);
+	m_entity_factory->m_all_entities.back()->SetPosition(m_game.m_window->GetWidth() * .5f, 700);
 	m_entity_factory->m_all_entities.back()->SetSize(14, 14);
-	m_entity_factory->m_all_entities.back()->SetTexture(game.m_ressource_loader->GetTexture("objects/ball.png"));
+	m_entity_factory->m_all_entities.back()->SetTexture(m_game.m_ressource_loader->GetTexture("objects/ball.png"));
 
-	m_current_level->GenerateLevel(game, *this, m_entity_factory);
-
-	m_current_update = &PlayState::UpdatePlay;
-
-	CreateWall(game);
+	m_current_level->GenerateLevel(m_game, *this, m_entity_factory);
 
 	m_current_update = &PlayState::UpdateWaitUntilInput;
 }
 
-void PlayState::UpdateWaitUntilInput(Game& game) {
+void PlayState::UpdateWaitUntilInput() {
 	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
-		entity->Render(game.m_window);
+		entity->Render(m_game.m_window);
 
-	game.m_score_handler->RenderScore(game, { 150 , GetTopMargin() * .5f }, 30);
+	RenderScore({ 150 , GetTopMargin() * .5f }, 30);
 
 	TextStyle style;
 	style.font_size = 60;
 
-	game.m_text_renderer->RenderText(
-		game.m_window->GetRenderer(),
+	m_game.m_text_renderer->RenderText(
 		"PRESS SPACE",
-		game.m_window->GetWidth() * .5f,
+		m_game.m_window->GetWidth() * .5f,
 		600,
 		style);
 
-	if (game.m_input_handler->GetKey(SDLK_SPACE)) SetModePlay(game);
+	if (m_game.m_input_handler->GetKey(SDLK_SPACE)) SetModePlay();
 }
 
-void PlayState::SetModePlay(Game& game) {
+void PlayState::SetModePlay() {
 
 	m_entity_factory->m_balls[0].lock()->SetDir({ .01, 1.0f });
 	m_current_update = &PlayState::UpdatePlay;
 }
 
-void PlayState::UpdatePlay(Game& game) {
+void PlayState::UpdatePlay() {
 	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
-		entity->Update(game, *this);
+		entity->Update(m_game.m_input_handler, m_game.m_window->GetHeight());
 
-	m_physics_handler->ProcessPhysic(*this, game);
+	m_physics_handler->ProcessPhysic(m_entity_factory->m_moving_entities, m_entity_factory->m_all_entities);
 
 	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
-		entity->Render(game.m_window);
+		entity->Render(m_game.m_window);
 
-	game.m_score_handler->RenderScore(game, {150 , GetTopMargin() * .5f }, 30);
+	RenderScore({150 , GetTopMargin() * .5f }, 30);
 
 	DestroyQueue();
 
-	CheckWinCondition(game);
+	CheckWinCondition();
 }
 
-void PlayState::SetModeLose(Game& game) {
+void PlayState::SetModeLose() {
 	float elapsed;
 	float duration;
 
 	m_current_update = &PlayState::UpdateLose;
 
-	m_coroutines->Start([this, elapsed = 0.0, duration = 2.0f, &game](float delta_time) mutable {
+	m_coroutines->Start([this, elapsed = 0.0, duration = 2.0f](float delta_time) mutable {
 		elapsed += delta_time;
 
 		if (elapsed >= duration) {
-			m_should_change_level = true;
-			return false;
+			RestartLevel();
+			return true;
 		}
 
-		return true;
+		return false;
 		});
 }
-void PlayState::UpdateLose(Game& game) {
+
+void PlayState::UpdateLose() {
 	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
-		entity->Render(game.m_window);
+		entity->Render(m_game.m_window);
 
-	m_coroutines->Update(game.m_input_handler->GetDeltaTime());
-	
-	if(m_should_change_level)
-		game.ChangeState(new PlayState(game, "level1.txt"));
-
+	m_coroutines->Update(m_game.m_input_handler->GetDeltaTime());
 }
 
-void PlayState::SetModeWin(Game& game) {
+void PlayState::SetModeWin() {
 	float elapsed;
 	float duration;
 
 	m_current_update = &PlayState::UpdateWin;
 
-	m_coroutines->Start([this, elapsed = 0.0, duration = 2.0f, &game](float delta_time) mutable {
+	m_coroutines->Start([this, elapsed = 0.0, duration = 2.0f](float delta_time) mutable {
 		elapsed += delta_time;
 
 		if (elapsed >= duration) {
-			m_should_change_level = true;
-			return false;
+			NextLevel();
+			return true;
 		}
 
-		return true;
+		return false;
 		});
 
 }
-void PlayState::UpdateWin(Game& game) {
+void PlayState::UpdateWin() {
 
 	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
-		entity->Render(game.m_window);
+		entity->Render(m_game.m_window);
 
-	m_coroutines->Update(game.m_input_handler->GetDeltaTime());
-
-	if (m_should_change_level)
-		game.ChangeState(new PlayState(game, "level2.txt"));
+	m_coroutines->Update(m_game.m_input_handler->GetDeltaTime());
 }
 
-void PlayState::CreateWall(const Game &game) {
-	m_entity_factory->CreateEntity(ENTITIES::ENTITY_WALL);
-	m_entity_factory->m_all_entities.back()->SetColor({ 0, 0, 0, 255 });
-	m_entity_factory->m_all_entities.back()->SetPosition(GetSideMargin() * .5f, game.m_window->GetHeight() * .5f);
-	m_entity_factory->m_all_entities.back()->SetSize(GetSideMargin(), game.m_window->GetHeight());
+#pragma endregion
 
-	m_entity_factory->CreateEntity(ENTITIES::ENTITY_WALL);
-	m_entity_factory->m_all_entities.back()->SetColor({ 0, 0, 0, 255 });
-	m_entity_factory->m_all_entities.back()->SetPosition(game.m_window->GetWidth() - GetSideMargin() * .5f, game.m_window->GetHeight() * .5f);
-	m_entity_factory->m_all_entities.back()->SetSize(GetSideMargin(), game.m_window->GetHeight());
-
-	m_entity_factory->CreateEntity(ENTITIES::ENTITY_WALL);
-	m_entity_factory->m_all_entities.back()->SetColor({ 0, 0, 0, 255 });
-	m_entity_factory->m_all_entities.back()->SetPosition(game.m_window->GetWidth() * .5f, GetTopMargin() * .5f);
-	m_entity_factory->m_all_entities.back()->SetSize(game.m_window->GetWidth(), GetTopMargin());
-}
-
-void PlayState::Update(Game& game) {
-	if (m_current_update) (this->*m_current_update)(game);
+void PlayState::Update() {
+	if (m_current_update) (this->*m_current_update)();
 	
 }
 
@@ -221,13 +268,24 @@ void PlayState::DestroyQueue() {
 
 }
 
-void PlayState::CheckWinCondition(Game &game) {
+void PlayState::CheckWinCondition() {
 	if (m_entity_factory->m_bricks.size() == 0) {
-		SetModeWin(game);
+		SetModeWin();
 		return;
 	}
 
 	if (m_entity_factory->m_balls.size() == 0) {
-		SetModeLose(game);
+		SetModeLose();
 	}
+}
+
+void PlayState::RestartLevel() {
+	m_entity_factory->Clear();
+	SetModeStart();
+}
+
+void PlayState::NextLevel() {
+	m_entity_factory->Clear();
+	m_current_level_index++;
+	SetModeStart();
 }

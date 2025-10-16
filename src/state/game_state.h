@@ -6,5 +6,5 @@ class GameState {
 public:
 	virtual ~GameState() = default;
 
-	virtual void Update(Game &game) = 0;
+	virtual void Update() = 0;
 };

@@ -37,27 +37,27 @@ void Ball::UpdateTrail() {
 				trail_pos[0] = Vector2(m_position_x, m_position_y);
 			}
 		}
-		return true;
+		return false;
 		});
 }
 
-void Ball::Update(const Game& game, const PlayState& state) {
+void Ball::Update(const std::unique_ptr<InputHandler>& input_handler, int window_height) {
 	
-	Entity::Update(game, state);
+	Entity::Update(input_handler, window_height);
 
 	if (std::sqrt(m_dir_x * m_dir_x + m_dir_y * m_dir_y) == 0) return;
 
 	if (std::abs(m_dir_x) < .01f) m_dir_x = .01f;
 
-	if (m_position_y >= game.m_window->GetHeight() - m_height * .5f)
+	if (m_position_y >= window_height - m_height * .5f)
 	{
 		m_should_be_free = true;
 	}
 
 	m_velocity_x = m_velocity_y = 0;
 
-	m_velocity_x = game.m_input_handler->GetDeltaTime() * m_speed * m_dir_x;
-	m_velocity_y = game.m_input_handler->GetDeltaTime() * m_speed * m_dir_y;
+	m_velocity_x = input_handler->GetDeltaTime() * m_speed * m_dir_x;
+	m_velocity_y = input_handler->GetDeltaTime() * m_speed * m_dir_y;
 }
 
 void Ball::Render(const std::unique_ptr<Window>& window) {
@@ -85,10 +85,10 @@ void Ball::Render(const std::unique_ptr<Window>& window) {
 	}
 }
 
-void Ball::OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity, const std::unique_ptr<EntityFactory>& entity_factory, const Game& game) {
+void Ball::OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity) {
+	
+	if(!(other_entity->GetFlag() & FLAG_PADDLE)) MovingEntity::OnHit(hit_result, other_entity);
 
-	m_velocity_x *= hit_result.collision_time;
-	m_velocity_y *= hit_result.collision_time;
 	other_entity->ModifyBallDirection(m_dir_x, m_dir_y, hit_result);
 
 	NormalizeDir();

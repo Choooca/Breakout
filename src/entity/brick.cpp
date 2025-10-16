@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <entity/entity_factory.h>
 #include <core/game.h>
+#include <core/game_event.h>
 
 Brick::Brick(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, SDL_Texture* texture, bool indestrutible, int health_point, int score)
 	: Entity(position_x, position_y, width, height, color, name, texture),
@@ -12,29 +13,20 @@ Brick::Brick(float position_x, float position_y, float width, float height, SDL_
 	m_collide_mask = EntityFlags::FLAG_BALL | EntityFlags::FLAG_PADDLE;
 }
 
-void Brick::OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity, const std::unique_ptr<EntityFactory>& entity_factory, const Game& game) {
+void Brick::OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity) {
 	
 	if (m_indestrutible) return;
+
+
 
 	m_health_point -= 1;
 	if (m_health_point > 0) {
 		HitAnim(.5f);
-		game.m_score_handler->AddScore(10);
+		GameEvents::Get().OnHitBrick.Invoke(10);
 	}
 	else
 	{
-		game.m_score_handler->AddScore(m_score);
-		if (rand() % 6 == 0) {
-			std::shared_ptr<Entity> entity = entity_factory->CreateEntity(
-				ENTITY_POWERUP,
-				m_position_x,
-				m_position_y,
-				25,
-				25,
-				{ 255, 255, 255, 255 },
-				game.m_ressource_loader->GetTexture("objects/PowerUp.png")
-			);
-		}
+		GameEvents::Get().OnBrickDestroyed.Invoke(m_score, {m_position_x, m_position_y});
 		DeathAnim(.2f);
 		m_colliding = false;
 	}
@@ -47,13 +39,13 @@ void Brick::HitAnim(float duration) {
 		if (m_elapsed >= duration) {
 			m_render_offset_x = 0;
 			m_render_offset_y = 0;
-			return false;
+			return true;
 		}
 
 		m_render_offset_x = std::rand() % 10 - 5;
 		m_render_offset_y = std::rand() % 5 - 2.5f;
 
-		return true;
+		return false;
 		});
 }
 
@@ -66,7 +58,7 @@ void Brick::DeathAnim(float duration, float max_scale_factor) {
 
 		if (m_elapsed >= duration) {
 			m_should_be_free = true;
-			return false;
+			return true;
 		}
 
 		if (m_elapsed / duration < .2f) {
@@ -79,6 +71,6 @@ void Brick::DeathAnim(float duration, float max_scale_factor) {
 			m_height = base_height * std::lerp(max_scale_factor, 0, (m_elapsed - .1f )/ (.9f * duration));
 		}
 
-		return true;
+		return false;
 		});
 }

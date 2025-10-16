@@ -10,6 +10,8 @@ public:
 	inline float GetXVelocity() { return m_velocity_x; };
 	inline float GetYVelocity() { return m_velocity_y; };
 
+	void OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity) override;
+
 protected:
 
 	float m_speed;

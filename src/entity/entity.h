@@ -5,6 +5,7 @@
 #include <string>
 #include <SDL3/SDL.h>
 #include <utility/coroutine.h>
+#include <core/input_handler.h>
 
 class Window;
 class Game;
@@ -38,10 +39,10 @@ public:
 
 	inline bool GetColliding() const { return m_colliding; };
 
-	virtual void Update(const Game& game, const PlayState& state);
+	virtual void Update(const std::unique_ptr<InputHandler>& input_handler, int window_height);
 	virtual void Render(const std::unique_ptr<Window>& window);
 
-	virtual void OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity, const std::unique_ptr<EntityFactory>& entity_factory, const Game& game) {};
+	virtual void OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity) {};
 
 	virtual void ModifyBallDirection(float &dir_x, float &dir_y, const Hit& hit_result);
 

@@ -6,7 +6,6 @@
 #include <core/physics_handler.h>
 #include <vector>
 #include <entity/paddle.h>
-#include <graphics/parallax_background.h>
 #include <core/level.h>
 
 class Game;
@@ -14,9 +13,10 @@ class RessourceLoader;
 
 class PlayState : public GameState {
 public :
-	PlayState(Game& game, std::string level_string_path);
+	PlayState(Game& game);
+	~PlayState();
 
-	void Update(Game &game) override;
+	void Update() override;
 	
 	inline float GetSideMargin() const { return m_side_margin; };
 	inline float GetTopMargin() const { return m_top_margin; };
@@ -29,40 +29,47 @@ public :
 
 private:
 
-	void (PlayState::*m_current_update)(Game& game) = nullptr;
+	Game& m_game;
 
-	std::vector<std::unique_ptr<ParallaxBackground>> m_all_backgrounds;
+	void (PlayState::*m_current_update)() = nullptr;
+	std::unique_ptr<CoroutineManager> m_coroutines;
 
-	std::shared_ptr<Entity> m_paddle;
-
+	int m_total_score;
+	int m_current_level_score;
+	int m_n_brick_x;
+	int m_n_brick_y;
+	int m_current_level_index;
 	float m_side_margin;
 	float m_top_margin;
 
-	int m_n_brick_x;
-	int m_n_brick_y;
+	void RenderScore(Vector2 position, float size, size_t n_zero = 7);
 
-	bool m_should_change_level;
+	void InitListener();
 
-	std::string m_level_string_path;
-
-	std::unique_ptr<CoroutineManager> m_coroutines;
-
-	void CreateWall(const Game &game);
 	void DestroyQueue();
-	void CheckWinCondition(Game& game);
+	void CheckWinCondition();
 
-	void SetModeStart(Game& game);
-	void UpdateStart(Game& game);
 
-	void SetModeWaitUntilInput(Game& game);
-	void UpdateWaitUntilInput(Game& game);
+#pragma region StateMachine
 
-	void SetModePlay(Game& game);
-	void UpdatePlay(Game& game);
+	void RestartLevel();
+	void NextLevel();
 
-	void SetModeLose(Game& game);
-	void UpdateLose(Game& game);
+	void SetModeStart();
+	void UpdateStart();
 
-	void SetModeWin(Game& game);
-	void UpdateWin(Game& game);
+	void SetModeWaitUntilInput();
+	void UpdateWaitUntilInput();
+
+	void SetModePlay();
+	void UpdatePlay();
+
+	void SetModeLose();
+	void UpdateLose();
+
+	void SetModeWin();
+	void UpdateWin();
+
+#pragma endregion
+	
 };

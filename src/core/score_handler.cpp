@@ -4,13 +4,13 @@
 #include <core/game.h>
 #include <algorithm>
 
-ScoreHandler::ScoreHandler() : m_current_score(0), m_nzero(6) {}
+ScoreHandler::ScoreHandler(Game& game) : m_game(game), m_current_score(0), m_nzero(6) {}
 
 void ScoreHandler::AddScore(int score) {
 	m_current_score += score;
 }
 
-void ScoreHandler::RenderScore(Game &game, Vector2 position, float size) {
+void ScoreHandler::RenderScore(Vector2 position, float size) {
 	TextStyle style;
 	style.font_size = size;
 
@@ -18,8 +18,7 @@ void ScoreHandler::RenderScore(Game &game, Vector2 position, float size) {
 	score_string = std::string(6 - std::min(m_nzero, score_string.length()), '0') + score_string;
 	std::string text = "Score : " + score_string;
 
-	game.m_text_renderer->RenderText(
-		game.m_window->GetRenderer(),
+	m_game.m_text_renderer->RenderText(
 		text,
 		position.x,
 		position.y,

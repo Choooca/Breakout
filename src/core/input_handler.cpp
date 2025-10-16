@@ -1,17 +1,25 @@
 #include "input_handler.h"
 #include <SDL3/SDL.h>
+#include <iostream>
 
 InputHandler::InputHandler(SDL_Window* window) :
-	m_current_time(0), m_last_time(0), m_delta_time(0), m_quit(false)
+	m_delta_time(0), m_quit(false)
 {
 	SDL_SetWindowRelativeMouseMode(window, true);
+
+	m_last_time = m_current_time = SDL_GetPerformanceCounter();
 }
 
 InputHandler::~InputHandler() {}
 
 void InputHandler::CalculateDeltaTime() {
-	m_current_time = SDL_GetTicks();
-	m_delta_time = (m_current_time - m_last_time) / 1000.0f;
+	m_current_time = SDL_GetPerformanceCounter();
+
+	uint64_t delta_tick = m_current_time - m_last_time;
+	uint64_t frequency = SDL_GetPerformanceFrequency();
+
+	m_delta_time = static_cast<float>(delta_tick) / static_cast<float>(frequency);
+
 	m_last_time = m_current_time;
 }
 

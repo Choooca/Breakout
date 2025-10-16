@@ -7,14 +7,11 @@
 #include <state/play_state.h>
 #include <core/game.h>
 
-void PhysicHandler::ProcessPhysic(const PlayState& state, const Game &game) {
+void PhysicHandler::ProcessPhysic(std::vector<std::weak_ptr<MovingEntity>> move_entities, std::vector<std::shared_ptr<Entity>> all_entities) {
 	
-	std::vector<std::weak_ptr<MovingEntity>> move_entities = state.m_entity_factory->m_moving_entities;
-	std::vector<std::shared_ptr<Entity>>& all_entities = state.m_entity_factory->m_all_entities;
-
 	for (size_t i = 0; i < move_entities.size(); i++) {
 		
-		if (!move_entities[i].lock()) continue;
+		if (move_entities[i].expired()) continue;
 
 		std::shared_ptr<MovingEntity> entity_a = move_entities[i].lock();
 
@@ -23,7 +20,7 @@ void PhysicHandler::ProcessPhysic(const PlayState& state, const Game &game) {
 
 		for (size_t j = i + 1; j < move_entities.size(); j++) {
 
-			if (!move_entities[j].lock()) continue;
+			if (move_entities[j].expired()) continue;
 
 			std::shared_ptr<MovingEntity> entity_b = move_entities[j].lock();
 
@@ -41,8 +38,8 @@ void PhysicHandler::ProcessPhysic(const PlayState& state, const Game &game) {
 			);
 
 			if (collision.hit) {
-				if (entity_b->GetFlag() & entity_a->GetCollisionMask()) entity_a->OnHit(collision.A, entity_b, state.m_entity_factory, game);
-				if (entity_a->GetFlag() & entity_b->GetCollisionMask()) entity_b->OnHit(collision.B, entity_a, state.m_entity_factory, game);
+				if (entity_b->GetFlag() & entity_a->GetCollisionMask()) entity_a->OnHit(collision.A, entity_b);
+				if (entity_a->GetFlag() & entity_b->GetCollisionMask()) entity_b->OnHit(collision.B, entity_a);
 			}
 		}
 
@@ -51,7 +48,7 @@ void PhysicHandler::ProcessPhysic(const PlayState& state, const Game &game) {
 
 	for (const std::weak_ptr<MovingEntity>& move_entity_weak : move_entities) {
 
-		if (!move_entity_weak.lock()) continue;
+		if (move_entity_weak.expired()) continue;
 
 		std::shared_ptr<MovingEntity> move_entity = move_entity_weak.lock();
 
@@ -74,8 +71,8 @@ void PhysicHandler::ProcessPhysic(const PlayState& state, const Game &game) {
 			);
 
 			if (collision.hit) {
-				if (entity->GetFlag() & move_entity->GetCollisionMask()) move_entity->OnHit(collision.A, entity, state.m_entity_factory, game);
-				if (move_entity->GetFlag() & entity->GetCollisionMask()) entity->OnHit(collision.B, move_entity, state.m_entity_factory, game);
+				if (entity->GetFlag() & move_entity->GetCollisionMask()) move_entity->OnHit(collision.A, entity);
+				if (move_entity->GetFlag() & entity->GetCollisionMask()) entity->OnHit(collision.B, move_entity);
 			}
 		}
 	}

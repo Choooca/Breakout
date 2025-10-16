@@ -9,6 +9,6 @@ class Game;
 
 class PhysicHandler {
 public:
-	void ProcessPhysic(const PlayState& state, const Game& game);
-	
+	void ProcessPhysic(std::vector<std::weak_ptr<MovingEntity>> move_entities, std::vector<std::shared_ptr<Entity>> all_entities);
+
 };

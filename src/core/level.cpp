@@ -4,8 +4,8 @@
 #include <format>
 #include <state/play_state.h>
 
-Level::Level(std::string level_path) {
-	m_level_string = LoadLevelFile(level_path);
+Level::Level(int level_index) : m_levels_paths({"level1.txt", "level2.txt"}) {
+	m_level_string = LoadLevelFile(m_levels_paths[level_index]);
 }
 	
 
@@ -64,6 +64,21 @@ void Level::GenerateLevel(const Game& game, const PlayState& state, const std::u
 		}
 
 	}
+
+	entity_factory->CreateEntity(ENTITIES::ENTITY_WALL);
+	entity_factory->m_all_entities.back()->SetColor({ 0, 0, 0, 255 });
+	entity_factory->m_all_entities.back()->SetPosition(state.GetSideMargin() * .5f, game.m_window->GetHeight() * .5f);
+	entity_factory->m_all_entities.back()->SetSize(state.GetSideMargin(), game.m_window->GetHeight());
+
+	entity_factory->CreateEntity(ENTITIES::ENTITY_WALL);
+	entity_factory->m_all_entities.back()->SetColor({ 0, 0, 0, 255 });
+	entity_factory->m_all_entities.back()->SetPosition(game.m_window->GetWidth() - state.GetSideMargin() * .5f, game.m_window->GetHeight() * .5f);
+	entity_factory->m_all_entities.back()->SetSize(state.GetSideMargin(), game.m_window->GetHeight());
+
+	entity_factory->CreateEntity(ENTITIES::ENTITY_WALL);
+	entity_factory->m_all_entities.back()->SetColor({ 0, 0, 0, 255 });
+	entity_factory->m_all_entities.back()->SetPosition(game.m_window->GetWidth() * .5f, state.GetTopMargin() * .5f);
+	entity_factory->m_all_entities.back()->SetSize(game.m_window->GetWidth(), state.GetTopMargin());
 }
 
 std::string Level::LoadLevelFile(std::string level_path) {

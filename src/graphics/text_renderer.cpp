@@ -1,7 +1,8 @@
 #include "text_renderer.h"
 #include <format>
+#include <core/game.h>
 
-TextRenderer::TextRenderer() {
+TextRenderer::TextRenderer(const std::unique_ptr<Window>& window) : m_window(window) {
 
 	if (TTF_Init() < 0)
 		fprintf(stderr, "Failed to init SDL_ttf : %s\n", SDL_GetError());
@@ -39,7 +40,7 @@ TTF_Font* TextRenderer::GetFont(const std::string& font_path, int size) {
 
 }
 
-void TextRenderer::RenderText(SDL_Renderer* renderer, const std::string& text, float x, float y, const TextStyle& style) {
+void TextRenderer::RenderText(const std::string& text, float x, float y, const TextStyle& style) {
 	
 	TTF_Font* font = GetFont(style.path, style.font_size);
 
@@ -51,7 +52,7 @@ void TextRenderer::RenderText(SDL_Renderer* renderer, const std::string& text, f
 		return;
 	}
 
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer , surface);
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(m_window->GetRenderer(), surface);
 
 	if (!texture) {
 		SDL_DestroySurface(surface);
@@ -60,7 +61,7 @@ void TextRenderer::RenderText(SDL_Renderer* renderer, const std::string& text, f
 	}
 
 	SDL_FRect dest = { x - surface->w * .5f, y - surface->h * .5f, surface->w, surface->h };
-	SDL_RenderTexture(renderer, texture, nullptr, &dest);
+	SDL_RenderTexture(m_window->GetRenderer(), texture, nullptr, &dest);
 
 	SDL_DestroyTexture(texture);
 	SDL_DestroySurface(surface);

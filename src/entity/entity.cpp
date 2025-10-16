@@ -3,6 +3,7 @@
 #include <graphics/window.h>
 #include "power_up.h"
 #include <iostream>
+#include <core/input_handler.h>
 
 Entity::Entity(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, SDL_Texture* texture)
 	: m_position_x(position_x),
@@ -19,8 +20,8 @@ Entity::Entity(float position_x, float position_y, float width, float height, SD
 	m_coroutines = std::make_unique<CoroutineManager>();
 }
 
-void Entity::Update(const Game& game, const PlayState& state) {
-	m_coroutines->Update(game.m_input_handler->GetDeltaTime());
+void Entity::Update(const std::unique_ptr<InputHandler>& input_handler, int window_height) {
+	m_coroutines->Update(input_handler->GetDeltaTime());
 }
 
 void Entity::SetColor(SDL_Color color) {

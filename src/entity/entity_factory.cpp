@@ -57,22 +57,9 @@ std::shared_ptr<Entity> EntityFactory::CreateEntity(ENTITIES entity_type, float 
 
 void EntityFactory::Clear() {
 
-	if (m_all_entities.empty()) return;
-
 	m_all_entities.clear();
+	m_moving_entities.clear();
+	m_balls.clear();
+	m_bricks.clear();
 
-	std::erase_if(m_moving_entities,
-		[](const std::weak_ptr<MovingEntity>& entity) {
-			return entity.expired();
-		});
-
-	std::erase_if(m_balls,
-		[](const std::weak_ptr<Ball>& entity) {
-			return entity.expired();
-		});
-
-	std::erase_if(m_bricks,
-		[](const std::weak_ptr<Brick>& entity) {
-			return entity.expired();
-		});
 }

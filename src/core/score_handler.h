@@ -7,12 +7,14 @@ class Game;
 class ScoreHandler {
 public:
 
-	ScoreHandler();
+	ScoreHandler(Game &game);
 
 	void AddScore(int score);
-	void RenderScore(Game& game, Vector2 position, float size);
+	void RenderScore(Vector2 position, float size);
 
 private:
+
+	Game& m_game;
 
 	int m_current_score;
 

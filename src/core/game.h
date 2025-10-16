@@ -13,13 +13,12 @@ public:
 	
 	void Run();
 
-	void ChangeState(GameState* state);
+	void ChangeState(std::unique_ptr<GameState> state);
 
 	std::unique_ptr<Window> m_window;
 	std::unique_ptr<InputHandler> m_input_handler;
 	std::unique_ptr<RessourceLoader> m_ressource_loader;
 	std::unique_ptr<TextRenderer> m_text_renderer;
-	std::unique_ptr<ScoreHandler> m_score_handler;
 
 private:
 

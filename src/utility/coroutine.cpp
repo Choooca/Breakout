@@ -1,24 +1,24 @@
 #include "coroutine.h"
 
-Coroutine::Coroutine(std::function<bool(float)> func) : m_update_func(func), m_finished(false){}
-
-void Coroutine::Update(float delta_time) {
-	if (m_finished) return;
-	m_finished = !m_update_func(delta_time);
+void CoroutineManager::Start(std::function<bool(float)> func) {
+	m_pending_coroutines.emplace_back(func);
 }
 
-void CoroutineManager::Start(std::function<bool(float)> func) {
-	m_coroutines.emplace_back(func);
+void CoroutineManager::Clear() {
+	m_coroutines.clear();
 }
 
 void CoroutineManager::Update(float delta_time) {
 	
-	for (Coroutine& coroutine : m_coroutines) coroutine.Update(delta_time);
+	if (!m_pending_coroutines.empty()) {
+		m_coroutines.insert(m_coroutines.end(), m_pending_coroutines.begin(), m_pending_coroutines.end());
+		m_pending_coroutines.clear();
+	}
 
 	m_coroutines.erase(
 		std::remove_if(m_coroutines.begin(), m_coroutines.end(),
-			[delta_time](Coroutine& coroutine) {
-				return coroutine.IsFinished();
+			[delta_time](std::function<bool(float)>& coroutine) {
+				return coroutine(delta_time);
 			}),
 		m_coroutines.end()
 		);

@@ -2,18 +2,6 @@
 #include <functional>
 #include <vector>
 
-class Coroutine {
-public:
-	Coroutine(std::function<bool(float)> func);
-
-	void Update(float delta_time);
-
-	inline bool IsFinished() const { return m_finished; };
-private:
-	std::function<bool(float)> m_update_func;
-	bool m_finished;
-};
-
 class CoroutineManager {
 public:
 
@@ -21,7 +9,10 @@ public:
 
 	void Update(float delta_time);
 
+	void Clear();
+
 private:
 
-	std::vector<Coroutine> m_coroutines;
+	std::vector<std::function<bool(float)>> m_coroutines;
+	std::vector<std::function<bool(float)>> m_pending_coroutines;
 };

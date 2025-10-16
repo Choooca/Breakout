@@ -17,12 +17,14 @@ Paddle::Paddle(float position_x, float position_y, float width, float height, SD
 }
 
 
-void Paddle::Update(const Game& game, const PlayState& state) {
-	Entity::Update(game, state);
-	Input(game, state);
+void Paddle::Update(const std::unique_ptr<InputHandler>& input_handler, int window_height) {
+	Entity::Update(input_handler, window_height);
+	Input(input_handler);
 }
 
-void Paddle::OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity, const std::unique_ptr<EntityFactory>& entity_factory, const Game& game) {
+void Paddle::OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity) {
+	MovingEntity::OnHit(hit_result, other_entity);
+
 	if (!(other_entity->GetFlag() & FLAG_BALL)) return;
 	
 	HitAnim(.2f);
@@ -35,28 +37,24 @@ void Paddle::HitAnim(float duration) {
 
 		if (m_elapsed >= duration) {
 			m_render_offset_y = 0;
-			return false;
+			return true;
 		}
 
 		m_render_offset_y = std::sin(3.1415 * (m_elapsed / duration)) * 20.0f;
-		return true;
+		return false;
 		});
 }
 
-void Paddle::Input(const Game& game, const PlayState& state) {
-	m_velocity_x = m_velocity_y = 0;
+void Paddle::Input(const std::unique_ptr<InputHandler>& input_handler) {
+	m_velocity_x = 0;
 	
-	if (game.m_input_handler->GetKey(SDLK_Q)) {
-		m_velocity_x = -m_speed * game.m_input_handler->GetDeltaTime();
+	if (input_handler->GetKey(SDLK_Q)) {
+		m_velocity_x = -m_speed * input_handler->GetDeltaTime();
 	}
 
-	if (game.m_input_handler->GetKey(SDLK_D)) {
-		m_velocity_x = m_speed * game.m_input_handler->GetDeltaTime();
-	}
-
-	if (m_position_x + m_velocity_x < state.GetSideMargin() + m_width * .5f) m_velocity_x = state.GetSideMargin() + m_width * .5f - m_position_x;
-	if (m_position_x + m_velocity_y > game.m_window->GetWidth() - state.GetSideMargin() - m_width * .5f) m_velocity_x = game.m_window->GetWidth() - state.GetSideMargin() - m_width * .5f - m_position_x;
-
+	if (input_handler->GetKey(SDLK_D)) {
+		m_velocity_x = m_speed * input_handler->GetDeltaTime();
+	} 
 }
 
 void Paddle::Render(const std::unique_ptr<Window>& window) {

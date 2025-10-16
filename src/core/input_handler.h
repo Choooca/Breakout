@@ -16,9 +16,9 @@ public:
 private:
 	void CalculateDeltaTime();
 	
+	uint64_t m_current_time;
+	uint64_t m_last_time;
 	float m_delta_time;
-	float m_current_time;
-	float m_last_time;
 
 	bool m_keys[128] = { false };
 };
