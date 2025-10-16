@@ -20,8 +20,6 @@ void Game::Run() {
 
 		m_window->RenderBegin();
 
-		m_text_renderer->RenderText(m_window->GetRenderer(), "Test", 500, 500);
-
 		m_current_state->Update(*this);
 		
 		m_window->RenderEnd();

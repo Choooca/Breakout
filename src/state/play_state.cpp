@@ -24,7 +24,9 @@ void PlayState::SetModeStart(Game& game) {
 	float elapsed;
 	float duration;
 
-	m_current_update = &PlayState::UpdateLose;
+	m_current_update = &PlayState::UpdateStart;
+
+	m_current_level = std::make_unique<Level>(m_level_string_path);
 
 	m_coroutines->Start([this, elapsed = 0.0, duration = 2.0f, &game](float delta_time) mutable {
 		elapsed += delta_time;
@@ -39,7 +41,17 @@ void PlayState::SetModeStart(Game& game) {
 }
 
 void PlayState::UpdateStart(Game& game) {
+	TextStyle style;
+	style.font_size = 100;
 
+	game.m_text_renderer->RenderText(
+		game.m_window->GetRenderer(),
+		m_current_level->GetName(),
+		game.m_window->GetWidth() * .5f,
+		game.m_window->GetHeight() * .5f,
+		style);
+
+	m_coroutines->Update(game.m_input_handler->GetDeltaTime());
 }
 
 void PlayState::SetModePlay(Game& game) {
@@ -56,9 +68,9 @@ void PlayState::SetModePlay(Game& game) {
 	m_entity_factory->m_all_entities.back()->SetSize(14, 14);
 	m_entity_factory->m_all_entities.back()->SetTexture(game.m_ressource_loader->GetTexture("objects/ball.png"));
 
-	CreateWall(game);
+	m_current_level->GenerateLevel(game, *this, m_entity_factory);
 
-	m_current_level = std::make_unique<Level>(m_level_string_path, game, *this, m_entity_factory);
+	CreateWall(game);
 
 	m_current_update = &PlayState::UpdatePlay;
 }
@@ -97,8 +109,6 @@ void PlayState::SetModeLose(Game& game) {
 void PlayState::UpdateLose(Game& game) {
 	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
 		entity->Render(game.m_window);
-
-	if (m_coroutines == nullptr) return;
 
 	m_coroutines->Update(game.m_input_handler->GetDeltaTime());
 	

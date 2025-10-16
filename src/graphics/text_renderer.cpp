@@ -59,7 +59,7 @@ void TextRenderer::RenderText(SDL_Renderer* renderer, const std::string& text, f
 		return;
 	}
 
-	SDL_FRect dest = { x, y, surface->w, surface->h };
+	SDL_FRect dest = { x - surface->w * .5f, y - surface->h * .5f, surface->w, surface->h };
 	SDL_RenderTexture(renderer, texture, nullptr, &dest);
 
 	SDL_DestroyTexture(texture);

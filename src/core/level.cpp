@@ -4,10 +4,12 @@
 #include <format>
 #include <state/play_state.h>
 
-Level::Level(std::string level_path, const Game& game, const PlayState& state, const std::unique_ptr<EntityFactory>& entity_factory) {
+Level::Level(std::string level_path) {
+	m_level_string = LoadLevelFile(level_path);
+}
+	
 
-	std::string level_string = LoadLevelFile(level_path);
-
+void Level::GenerateLevel(const Game& game, const PlayState& state, const std::unique_ptr<EntityFactory>& entity_factory) {
 	float x_step = (game.m_window->GetWidth() - state.GetSideMargin() * 2.0f) / state.GetNXBrick();
 	float y_step = 400.0f / state.GetNYBrick();
 
@@ -15,8 +17,8 @@ Level::Level(std::string level_path, const Game& game, const PlayState& state, c
 	{
 		char c = '0';
 
-		if (level_string.length() > i) {
-			c = level_string[i];
+		if (m_level_string.length() > i) {
+			c = m_level_string[i];
 		}
 
 		switch (c)
@@ -60,22 +62,36 @@ std::string Level::LoadLevelFile(std::string level_path) {
 
 	if (!level_file.is_open()) {
 		fprintf(stderr, "Failed to load file : %s", level_path);
+		return "";
 	}
 
-	std::stringstream buffer;
-	buffer << level_file.rdbuf();
-	level_file.close();
-	
-	std::string string_level = buffer.str();
-	string_level.erase(
-		std::remove_if(
-			string_level.begin(),
-			string_level.end(),
-			[](unsigned char c) {return !std::isprint(c);
-			}),
-		string_level.end()
-	);
+	std::string result;
+	std::string line;
+	bool first_line = true;
 
-	return string_level;
+	while (std::getline(level_file, line)) {
+		
+		line.erase(
+			std::remove_if(
+				line.begin(),
+				line.end(),
+				[](unsigned char c) {return !std::isprint(c);}
+			),
+			line.end()
+		);
+
+		if (first_line) {
+			m_level_name = line;
+			first_line = false;
+			continue;
+		}
+
+		result += line;
+
+	}
+
+	level_file.close();
+
+	return result;
 
 }
