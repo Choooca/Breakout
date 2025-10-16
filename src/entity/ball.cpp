@@ -49,6 +49,8 @@ void Ball::Update(const Game& game, const PlayState& state) {
 	
 	Entity::Update(game, state);
 
+	if (std::abs(m_dir_x) < .02f) m_dir_x = .05f;
+
 	if (m_position_y >= game.m_window->GetHeight() - m_height * .5f)
 	{
 		m_should_be_free = true;

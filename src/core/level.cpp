@@ -34,10 +34,20 @@ void Level::GenerateLevel(const Game& game, const PlayState& state, const std::u
 				(i / state.GetNYBrick()) * y_step + y_step * .5f + state.GetTopMargin()
 			);
 			entity_factory->m_all_entities.back()->SetSize(x_step, y_step);
-			entity_factory->m_all_entities.back()->SetTexture(game.m_ressource_loader->GetTexture("objects/brick1.png"));
+			entity_factory->m_all_entities.back()->SetTexture(game.m_ressource_loader->GetTexture("objects/brick.png"));
 			break;
-
+		
 		case '2':
+			entity_factory->CreateEntity(ENTITIES::ENTITY_HARD_BRICK);
+			entity_factory->m_all_entities.back()->SetColor({ 255, 255, 255, 255 });
+			entity_factory->m_all_entities.back()->SetPosition(
+				state.GetSideMargin() + (i % state.GetNXBrick()) * x_step + x_step * .5f,
+				(i / state.GetNYBrick()) * y_step + y_step * .5f + state.GetTopMargin()
+			);
+			entity_factory->m_all_entities.back()->SetSize(x_step, y_step);
+			entity_factory->m_all_entities.back()->SetTexture(game.m_ressource_loader->GetTexture("objects/brick_hard.png"));
+			break;
+		case '3':
 
 			entity_factory->CreateEntity(ENTITIES::ENTITY_WALL);
 			entity_factory->m_all_entities.back()->SetColor({ 100, 100, 100, 255 });
@@ -46,7 +56,7 @@ void Level::GenerateLevel(const Game& game, const PlayState& state, const std::u
 				(i / state.GetNYBrick()) * y_step + y_step * .5f + state.GetTopMargin()
 			);
 			entity_factory->m_all_entities.back()->SetSize(x_step, y_step);
-			entity_factory->m_all_entities.back()->SetTexture(game.m_ressource_loader->GetTexture("objects/brick1.png"));
+			entity_factory->m_all_entities.back()->SetTexture(game.m_ressource_loader->GetTexture("objects/wall.png"));
 			break;
 
 		default:
