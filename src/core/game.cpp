@@ -9,6 +9,7 @@ Game::Game() {
 	m_input_handler = std::make_unique<InputHandler>(m_window->GetWindow());
 	m_ressource_loader = std::make_unique<RessourceLoader>(m_window->GetRenderer());
 	m_text_renderer = std::make_unique<TextRenderer>();
+	m_score_handler = std::make_unique<ScoreHandler>();
 }
 
 void Game::Run() {

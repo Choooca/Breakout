@@ -5,9 +5,9 @@
 #include <entity/entity_factory.h>
 #include <core/game.h>
 
-Brick::Brick(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, SDL_Texture* texture, bool indestrutible, int health_point)
+Brick::Brick(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, SDL_Texture* texture, bool indestrutible, int health_point, int score)
 	: Entity(position_x, position_y, width, height, color, name, texture),
-	  m_indestrutible(indestrutible), m_health_point(health_point){
+	  m_indestrutible(indestrutible), m_health_point(health_point), m_score(score){
 	m_flag = EntityFlags::FLAG_BRICK;
 	m_collide_mask = EntityFlags::FLAG_BALL | EntityFlags::FLAG_PADDLE;
 }
@@ -19,9 +19,11 @@ void Brick::OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity, const st
 	m_health_point -= 1;
 	if (m_health_point > 0) {
 		HitAnim(.5f);
+		game.m_score_handler->AddScore(10);
 	}
 	else
 	{
+		game.m_score_handler->AddScore(m_score);
 		if (rand() % 6 == 0) {
 			std::shared_ptr<Entity> entity = entity_factory->CreateEntity(
 				ENTITY_POWERUP,

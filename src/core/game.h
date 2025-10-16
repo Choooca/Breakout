@@ -5,6 +5,7 @@
 #include <core/input_handler.h>
 #include <graphics/window.h>
 #include <graphics/text_renderer.h>
+#include <core/score_handler.h>
 
 class Game {
 public:
@@ -18,6 +19,7 @@ public:
 	std::unique_ptr<InputHandler> m_input_handler;
 	std::unique_ptr<RessourceLoader> m_ressource_loader;
 	std::unique_ptr<TextRenderer> m_text_renderer;
+	std::unique_ptr<ScoreHandler> m_score_handler;
 
 private:
 

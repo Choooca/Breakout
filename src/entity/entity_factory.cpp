@@ -27,19 +27,19 @@ std::shared_ptr<Entity> EntityFactory::CreateEntity(ENTITIES entity_type, float 
 		break;
 	}
 	case ENTITY_BRICK: {
-		std::shared_ptr<Brick> brick = std::make_shared<Brick>(position_x, position_y, width, height, color, "Brick", texture, false, 3);
+		std::shared_ptr<Brick> brick = std::make_shared<Brick>(position_x, position_y, width, height, color, "Brick", texture, false, 2, 100);
 		m_all_entities.push_back(brick);
 		m_bricks.push_back(brick);
 		break;
 	}
 	case ENTITY_HARD_BRICK : {
-			std::shared_ptr<Brick> brick = std::make_shared<Brick>(position_x, position_y, width, height, color, "HardBrick", texture, false, 6);
+		std::shared_ptr<Brick> brick = std::make_shared<Brick>(position_x, position_y, width, height, color, "HardBrick", texture, false, 6, 300);
 			m_all_entities.push_back(brick);
 			m_bricks.push_back(brick);
 			break;
 		}
 	case ENTITY_WALL:
-		m_all_entities.push_back(std::make_shared<Brick>(position_x, position_y, width, height, color, "Wall", texture, true, 1));
+		m_all_entities.push_back(std::make_shared<Brick>(position_x, position_y, width, height, color, "Wall", texture, true, 1, 0));
 		break;
 	case ENTITY_POWERUP: {
 		std::shared_ptr<PowerUp> powerup = std::make_shared<PowerUp>(position_x, position_y, width, height, color, "", 150.0f, texture);

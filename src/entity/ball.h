@@ -4,6 +4,7 @@
 #include <array>
 
 class Entity;
+struct Vector2;
 
 class Ball : public MovingEntity {
 public:
@@ -15,6 +16,7 @@ public:
 	void Render(const std::unique_ptr<Window>& window) override;
 
 	void SetRandomDir();
+	void SetDir(Vector2 dir);
 private:
 	
 	void UpdateTrail();

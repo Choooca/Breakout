@@ -13,15 +13,11 @@
 Ball::Ball(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, float speed, SDL_Texture* texture)
 	: MovingEntity(position_x, position_y, width, height, color, name, speed, texture),
 	  m_dir_x(0),
-	  m_dir_y(1) {
+	  m_dir_y(0) {
 
 	trail_pos.fill({ -100, -100 });
 
 	UpdateTrail();
-
-	float length = std::sqrt(m_dir_x * m_dir_x + m_dir_y * m_dir_y);
-	m_dir_x /= length;
-	m_dir_y /= length;
 
 	m_flag = EntityFlags::FLAG_BALL;
 	m_collide_mask = EntityFlags::FLAG_BRICK | EntityFlags::FLAG_PADDLE;
@@ -49,7 +45,9 @@ void Ball::Update(const Game& game, const PlayState& state) {
 	
 	Entity::Update(game, state);
 
-	if (std::abs(m_dir_x) < .02f) m_dir_x = .05f;
+	if (std::sqrt(m_dir_x * m_dir_x + m_dir_y * m_dir_y) == 0) return;
+
+	if (std::abs(m_dir_x) < .01f) m_dir_x = .01f;
 
 	if (m_position_y >= game.m_window->GetHeight() - m_height * .5f)
 	{
@@ -104,8 +102,14 @@ void Ball::SetRandomDir() {
 	NormalizeDir();
 }
 
+void Ball::SetDir(Vector2 dir) {
+	m_dir_x = dir.x;
+	m_dir_y = dir.y;
+}
+
 void Ball::NormalizeDir() {
 	float length = std::sqrt(m_dir_x * m_dir_x + m_dir_y * m_dir_y);
+	if (length == 0) return;
 	m_dir_x /= length;
 	m_dir_y /= length;
 }

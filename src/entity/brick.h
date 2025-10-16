@@ -6,7 +6,7 @@ class EntityFactory;
 class Brick : public Entity {
 public:
 
-	Brick(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, SDL_Texture* texture, bool indestrutible, int health_point);
+	Brick(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, SDL_Texture* texture, bool indestrutible, int health_point, int score);
 
 	void OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity, const std::unique_ptr<EntityFactory>& entity_factory, const Game& game) override;
 
@@ -18,4 +18,5 @@ private:
 	bool m_indestrutible = false;
 
 	int m_health_point;
+	int m_score;
 };

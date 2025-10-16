@@ -15,10 +15,13 @@ public:
 
 	void ModifyBallDirection(float &dir_x, float &dir_y, const Hit& hit_result) override;
 
+	void Render(const std::unique_ptr<Window>& window) override;
 	void OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity, const std::unique_ptr<EntityFactory>& entity_factory, const Game& game) override;
 private:
 
 	float m_max_influence;
+
+	float m_move_scale_factor;
 
 	void Input(const Game &game, const PlayState &state);
 

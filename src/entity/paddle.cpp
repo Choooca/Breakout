@@ -9,7 +9,7 @@
 
 Paddle::Paddle(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, float speed, SDL_Texture* texture)
 	: MovingEntity(position_x, position_y, width, height, color, name, speed, texture),
-	  m_max_influence(1.1f){
+	  m_max_influence(1.1f), m_move_scale_factor(.2f){
 
 	m_flag = EntityFlags::FLAG_PADDLE;
 	m_collide_mask = EntityFlags::FLAG_BRICK | EntityFlags::FLAG_BALL | EntityFlags::FLAG_POWERUP;
@@ -57,6 +57,22 @@ void Paddle::Input(const Game& game, const PlayState& state) {
 	if (m_position_x + m_velocity_x < state.GetSideMargin() + m_width * .5f) m_velocity_x = state.GetSideMargin() + m_width * .5f - m_position_x;
 	if (m_position_x + m_velocity_y > game.m_window->GetWidth() - state.GetSideMargin() - m_width * .5f) m_velocity_x = game.m_window->GetWidth() - state.GetSideMargin() - m_width * .5f - m_position_x;
 
+}
+
+void Paddle::Render(const std::unique_ptr<Window>& window) {
+	float base_width = m_width;
+	float base_height = m_height;
+	
+	if (m_velocity_x != 0)
+	{
+		m_width = base_width * (1 + m_move_scale_factor);
+		m_height = base_height * (1 - m_move_scale_factor);
+	}
+
+	Entity::Render(window);
+
+	m_width = base_width;
+	m_height = base_height;
 }
 
 void Paddle::ModifyBallDirection(float &dir_x, float &dir_y, const Hit& hit_result) {

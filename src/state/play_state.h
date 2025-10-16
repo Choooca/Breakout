@@ -54,6 +54,9 @@ private:
 	void SetModeStart(Game& game);
 	void UpdateStart(Game& game);
 
+	void SetModeWaitUntilInput(Game& game);
+	void UpdateWaitUntilInput(Game& game);
+
 	void SetModePlay(Game& game);
 	void UpdatePlay(Game& game);
 

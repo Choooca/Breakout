@@ -32,7 +32,7 @@ void PlayState::SetModeStart(Game& game) {
 		elapsed += delta_time;
 
 		if (elapsed >= duration) {
-			SetModePlay(game);
+			SetModeWaitUntilInput(game);
 			return false;
 		}
 
@@ -51,27 +51,55 @@ void PlayState::UpdateStart(Game& game) {
 		game.m_window->GetHeight() * .5f,
 		style);
 
+	game.m_score_handler->RenderScore(game, { game.m_window->GetWidth() * .5f , 300}, 50);
+
 	m_coroutines->Update(game.m_input_handler->GetDeltaTime());
 }
 
-void PlayState::SetModePlay(Game& game) {
-
+void PlayState::SetModeWaitUntilInput(Game& game) {
 	m_entity_factory->Clear();
 
 	m_paddle = m_entity_factory->CreateEntity(ENTITIES::ENTITY_PADDLE);
 	m_entity_factory->m_all_entities.back()->SetColor({ 255, 100, 255, 255 });
-	m_entity_factory->m_all_entities.back()->SetPosition(400, 800);
+	m_entity_factory->m_all_entities.back()->SetPosition(game.m_window->GetWidth() * .5f, 800);
 	m_entity_factory->m_all_entities.back()->SetSize(100, 20);
 
 	m_entity_factory->CreateEntity(ENTITIES::ENTITY_BALL);
-	m_entity_factory->m_all_entities.back()->SetPosition(400, 700);
+	m_entity_factory->m_all_entities.back()->SetPosition(game.m_window->GetWidth() * .5f, 700);
 	m_entity_factory->m_all_entities.back()->SetSize(14, 14);
 	m_entity_factory->m_all_entities.back()->SetTexture(game.m_ressource_loader->GetTexture("objects/ball.png"));
 
 	m_current_level->GenerateLevel(game, *this, m_entity_factory);
 
+	m_current_update = &PlayState::UpdatePlay;
+
 	CreateWall(game);
 
+	m_current_update = &PlayState::UpdateWaitUntilInput;
+}
+
+void PlayState::UpdateWaitUntilInput(Game& game) {
+	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
+		entity->Render(game.m_window);
+
+	game.m_score_handler->RenderScore(game, { 150 , GetTopMargin() * .5f }, 30);
+
+	TextStyle style;
+	style.font_size = 60;
+
+	game.m_text_renderer->RenderText(
+		game.m_window->GetRenderer(),
+		"PRESS SPACE",
+		game.m_window->GetWidth() * .5f,
+		600,
+		style);
+
+	if (game.m_input_handler->GetKey(SDLK_SPACE)) SetModePlay(game);
+}
+
+void PlayState::SetModePlay(Game& game) {
+
+	m_entity_factory->m_balls[0].lock()->SetDir({ .01, 1.0f });
 	m_current_update = &PlayState::UpdatePlay;
 }
 
@@ -83,6 +111,8 @@ void PlayState::UpdatePlay(Game& game) {
 
 	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
 		entity->Render(game.m_window);
+
+	game.m_score_handler->RenderScore(game, {150 , GetTopMargin() * .5f }, 30);
 
 	DestroyQueue();
 
@@ -126,10 +156,7 @@ void PlayState::SetModeWin(Game& game) {
 	m_coroutines->Start([this, elapsed = 0.0, duration = 2.0f, &game](float delta_time) mutable {
 		elapsed += delta_time;
 
-		std::cout << elapsed;
-
 		if (elapsed >= duration) {
-			this->m_current_update = nullptr;
 			m_should_change_level = true;
 			return false;
 		}
@@ -143,8 +170,6 @@ void PlayState::UpdateWin(Game& game) {
 	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
 		entity->Render(game.m_window);
 
-	if (m_coroutines == nullptr) return;
-
 	m_coroutines->Update(game.m_input_handler->GetDeltaTime());
 
 	if (m_should_change_level)
@@ -153,22 +178,19 @@ void PlayState::UpdateWin(Game& game) {
 
 void PlayState::CreateWall(const Game &game) {
 	m_entity_factory->CreateEntity(ENTITIES::ENTITY_WALL);
-	m_entity_factory->m_all_entities.back()->SetColor({ 200, 200, 200, 255 });
+	m_entity_factory->m_all_entities.back()->SetColor({ 0, 0, 0, 255 });
 	m_entity_factory->m_all_entities.back()->SetPosition(GetSideMargin() * .5f, game.m_window->GetHeight() * .5f);
 	m_entity_factory->m_all_entities.back()->SetSize(GetSideMargin(), game.m_window->GetHeight());
-	m_entity_factory->m_all_entities.back()->m_name = "Wall";
 
 	m_entity_factory->CreateEntity(ENTITIES::ENTITY_WALL);
-	m_entity_factory->m_all_entities.back()->SetColor({ 200, 200, 200, 255 });
+	m_entity_factory->m_all_entities.back()->SetColor({ 0, 0, 0, 255 });
 	m_entity_factory->m_all_entities.back()->SetPosition(game.m_window->GetWidth() - GetSideMargin() * .5f, game.m_window->GetHeight() * .5f);
 	m_entity_factory->m_all_entities.back()->SetSize(GetSideMargin(), game.m_window->GetHeight());
-	m_entity_factory->m_all_entities.back()->m_name = "Wall";
 
 	m_entity_factory->CreateEntity(ENTITIES::ENTITY_WALL);
-	m_entity_factory->m_all_entities.back()->SetColor({ 200, 200, 200, 255 });
+	m_entity_factory->m_all_entities.back()->SetColor({ 0, 0, 0, 255 });
 	m_entity_factory->m_all_entities.back()->SetPosition(game.m_window->GetWidth() * .5f, GetTopMargin() * .5f);
 	m_entity_factory->m_all_entities.back()->SetSize(game.m_window->GetWidth(), GetTopMargin());
-	m_entity_factory->m_all_entities.back()->m_name = "Wall";
 }
 
 void PlayState::Update(Game& game) {
