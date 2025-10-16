@@ -11,16 +11,17 @@ Brick::Brick(float position_x, float position_y, float width, float height, SDL_
 	  m_indestrutible(indestrutible), m_health_point(health_point), m_score(score){
 	m_flag = EntityFlags::FLAG_BRICK;
 	m_collide_mask = EntityFlags::FLAG_BALL | EntityFlags::FLAG_PADDLE;
+	m_base_health_point = health_point;
 }
 
 void Brick::OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity) {
 	
 	if (m_indestrutible) return;
 
-
-
 	m_health_point -= 1;
 	if (m_health_point > 0) {
+		unsigned char gb = std::lerp(0.0f, 255.0f, static_cast<float>(m_health_point) / static_cast<float>(m_base_health_point));
+		m_color = { 255,gb,gb,255};
 		HitAnim(.5f);
 		GameEvents::Get().OnHitBrick.Invoke(10);
 	}

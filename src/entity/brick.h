@@ -18,5 +18,6 @@ private:
 	bool m_indestrutible = false;
 
 	int m_health_point;
+	int m_base_health_point;
 	int m_score;
 };
