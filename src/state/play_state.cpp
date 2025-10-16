@@ -136,6 +136,7 @@ void PlayState::SetModeWaitUntilInput() {
 	m_entity_factory->m_all_entities.back()->SetColor({ 255, 100, 255, 255 });
 	m_entity_factory->m_all_entities.back()->SetPosition(m_game.m_window->GetWidth() * .5f, 800);
 	m_entity_factory->m_all_entities.back()->SetSize(100, 20);
+	m_entity_factory->m_all_entities.back()->SetTexture(m_game.m_ressource_loader->GetTexture("objects/paddle.png"));
 
 	m_entity_factory->CreateEntity(ENTITIES::ENTITY_BALL);
 	m_entity_factory->m_all_entities.back()->SetPosition(m_game.m_window->GetWidth() * .5f, 700);
