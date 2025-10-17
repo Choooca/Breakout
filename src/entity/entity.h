@@ -23,6 +23,7 @@ enum EntityFlags : uint32_t {
 class Entity {
 public:
 	Entity(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, SDL_Texture* texture);
+	~Entity() = default;
 
 	void SetColor(SDL_Color color);
 	void SetPosition(float x, float y);

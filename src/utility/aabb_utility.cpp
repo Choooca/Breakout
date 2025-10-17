@@ -11,49 +11,6 @@ bool PointCollideAABB(const Vector2 point, const AABB aabb) {
 
 	return false;
 }
-//
-//Hit AABBCollideAABB(const AABB a, const AABB b) {
-//	Hit ret = { false, {0,0} };
-//
-//	AABB minkownski_aabb = MinkowskiDifference(a, b);
-//
-//	if (!PointCollideAABB({ 0, 0 }, minkownski_aabb)) return ret;
-//
-//	ret.is_hit = true;
-//	ret.penetration_vector = AABBPenetrationVector(minkownski_aabb);
-//
-//	return ret;
-//}
-
-Vector2 AABBPenetrationVector(AABB aabb) {
-	Vector2 min, max;
-	min.x = aabb.x - aabb.m_half_width;
-	max.x = aabb.x + aabb.m_half_width;
-	min.y = aabb.y - aabb.m_half_height;
-	max.y = aabb.y + aabb.m_half_height;
-
-	Vector2 pv;
-
-	float min_dist = std::abs(min.x);
-	pv = { min.x, 0.0f };
-
-	if (std::abs(max.x) < min_dist) {
-		min_dist = std::abs(max.x);
-		pv = { max.x, 0.0f };
-	}
-
-	if (std::abs(min.y) < min_dist) {
-		min_dist = std::abs(min.y);
-		pv = { 0.0f, min.y };
-	}
-
-	if (std::abs(max.y) < min_dist) {
-		min_dist = std::abs(max.y);
-		pv = { 0.0f, max.y };
-	}
-
-	return pv;
-}
 
 AABB MinkowskiDifference(const AABB a, const AABB b) {
 	AABB ret;

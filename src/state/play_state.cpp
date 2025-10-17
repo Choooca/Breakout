@@ -10,6 +10,7 @@
 #include <entity/ball.h>
 #include <iostream>
 #include <core/game_event.h>
+#include <state/game_over_state.h>
 
 PlayState::PlayState(Game& game) :
 	m_game(game),
@@ -231,7 +232,9 @@ void PlayState::SetModeLose() {
 
 		if (elapsed >= duration) {
 			m_health_point--;
-			RestartLevel();
+
+			if (m_health_point > 0) RestartLevel();
+			else m_game.ChangeState(std::make_unique<GameOverState>(m_game, m_total_score));
 			return true;
 		}
 
@@ -240,10 +243,21 @@ void PlayState::SetModeLose() {
 }
 
 void PlayState::UpdateLose() {
+
+	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities) {
+		entity->UpdateCoroutine(m_game.m_input_handler);
+		if (entity->GetUpdateEnable()) entity->Update(m_game.m_input_handler, m_game.m_window->GetHeight());
+	}
+
+	m_physics_handler->ProcessPhysic(m_entity_factory->m_moving_entities, m_entity_factory->m_all_entities);
+
+
 	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
 		entity->Render(m_game.m_window);
 
 	m_coroutines->Update(m_game.m_input_handler->GetDeltaTime());
+
+	DestroyQueue();
 }
 
 void PlayState::SetModeWin() {
@@ -269,10 +283,19 @@ void PlayState::SetModeWin() {
 }
 void PlayState::UpdateWin() {
 
+	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities) {
+		entity->UpdateCoroutine(m_game.m_input_handler);
+		if (entity->GetUpdateEnable()) entity->Update(m_game.m_input_handler, m_game.m_window->GetHeight());
+	}
+
+	m_physics_handler->ProcessPhysic(m_entity_factory->m_moving_entities, m_entity_factory->m_all_entities);
+
 	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
 		entity->Render(m_game.m_window);
 
 	m_coroutines->Update(m_game.m_input_handler->GetDeltaTime());
+	
+	DestroyQueue();
 }
 
 #pragma endregion

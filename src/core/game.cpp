@@ -2,6 +2,8 @@
 #include <memory>
 #include <state/game_state.h>
 #include <state/play_state.h>
+#include <state/game_over_state.h>
+#include <state/title_card_state.h>
 #include <graphics/ressource_loader.h>
 
 Game::Game() {
@@ -13,7 +15,7 @@ Game::Game() {
 
 void Game::Run() {
 
-	ChangeState(std::make_unique<PlayState>(*this));
+	m_current_state = std::make_unique<TitleCardState>(*this);
 
 	while (!m_input_handler->m_quit) {
 		m_input_handler->Update();
@@ -23,9 +25,11 @@ void Game::Run() {
 		m_current_state->Update();
 		
 		m_window->RenderEnd();
+
+		if(m_pending_state) m_current_state = std::move(m_pending_state);
 	}
 }
 
 void Game::ChangeState(std::unique_ptr<GameState> state) {
-	m_current_state = std::move(state);
+	m_pending_state = std::move(state);
 }

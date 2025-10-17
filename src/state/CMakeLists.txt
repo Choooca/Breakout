@@ -1,5 +1,7 @@
 set(STATE_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/play_state.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/title_card_state.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/game_over_state.cpp
 
 )
 

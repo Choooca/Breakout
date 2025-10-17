@@ -22,6 +22,7 @@ public:
 
 private:
 
+	std::unique_ptr<GameState> m_pending_state;
 	std::unique_ptr<GameState> m_current_state;
 
 };

@@ -3,6 +3,7 @@ set(GRAPHICS_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/ressource_loader.cpp	
 	${CMAKE_CURRENT_SOURCE_DIR}/text_renderer.cpp	
 	${CMAKE_CURRENT_SOURCE_DIR}/background.cpp	
+	${CMAKE_CURRENT_SOURCE_DIR}/ui_button.cpp	
 )
 
 list(APPEND PROJECT_SOURCES ${GRAPHICS_SOURCES})
