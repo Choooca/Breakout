@@ -3,22 +3,18 @@
 #include <memory>
 #include <utility/math_utils.h>
 #include <string>
+#include <state/menu_state.h>
 
 class Game;
 class UIButton;
 
-class GameOverState : public GameState {
+class GameOverState : public MenuState {
 public:
 	GameOverState(Game& game, int score);
 	void Update();
 
 private:
-	Game& m_game;
 
 	int m_score_to_show;
 	std::string m_score_string;
-
-	std::unique_ptr<UIButton> m_quit_button;
-	std::unique_ptr<UIButton> m_menu_button;
-	std::unique_ptr<UIButton> m_retry_button;
 };

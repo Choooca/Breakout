@@ -13,7 +13,7 @@
 #include <state/game_over_state.h>
 
 PlayState::PlayState(Game& game) :
-	m_game(game),
+	GameState(game),
 	m_side_margin(54),
 	m_top_margin(50),
 	m_n_brick_x(13),

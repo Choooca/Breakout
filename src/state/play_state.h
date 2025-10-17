@@ -28,9 +28,6 @@ public :
 	std::unique_ptr<Level> m_current_level;
 
 private:
-
-	Game& m_game;
-
 	void (PlayState::*m_current_update)() = nullptr;
 	std::unique_ptr<CoroutineManager> m_coroutines;
 
