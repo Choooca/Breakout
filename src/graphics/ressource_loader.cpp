@@ -26,7 +26,7 @@ SDL_Texture* RessourceLoader::GetTexture(std::string path) {
 	unsigned char* data = stbi_load((std::string(TEXTURES_PATH) + "/" + path).c_str(), &width, &height, &channels, 0);
 
 	if (!data) {
-		fprintf(stderr, "Failed to load image : %s\n", path);
+		fprintf(stderr, "Failed to load image : %s\n", path.c_str());
 		fprintf(stderr, "stbi error : %s\n", stbi_failure_reason());
 		return nullptr;
 	}

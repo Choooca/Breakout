@@ -31,7 +31,7 @@ TTF_Font* TextRenderer::GetFont(const std::string& font_path, int size) {
 
 	TTF_Font* font = TTF_OpenFont((std::string(FONTS_PATH) + "/" + font_path).c_str(), size);
 	if (!font) {
-		fprintf(stderr, "Failed to load font : %s\n", font_path);
+		fprintf(stderr, "Failed to load font : %s\n", font_path.c_str());
 		return nullptr;
 	}
 
@@ -48,7 +48,7 @@ void TextRenderer::RenderText(const std::string& text, float x, float y, const T
 
 	SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), text.length(), style.color);
 	if (!surface) {
-		fprintf(stderr, "Failed to render text : %\n", SDL_GetError());
+		fprintf(stderr, "Failed to render text : %s\n", SDL_GetError());
 		return;
 	}
 
