@@ -25,6 +25,8 @@ PlayState::PlayState(Game& game) :
 	m_physics_handler = std::make_unique<PhysicHandler>();
 	m_coroutines = std::make_unique<CoroutineManager>();
 
+	m_health_point = m_max_health_point;
+
 	InitListener();
 
 	SetModeStart();
@@ -92,6 +94,30 @@ void PlayState::RenderScore(Vector2 position, float size, size_t n_zero) {
 		style);
 }
 
+void PlayState::RenderHealthPoint(Vector2 position, float size, float padding, bool is_center) {
+
+	SDL_Texture* texture = m_game.m_ressource_loader->GetTexture("objects/health_point.png");
+	SDL_SetTextureAlphaMod(texture, 255);
+	SDL_SetTextureColorMod(texture, 255, 255, 255);
+	
+	if (is_center) {
+		float half_length = (size * m_health_point + padding * (m_health_point - 1)) * .5f;
+		for (size_t i = 0; i < m_health_point; i++)
+		{
+			SDL_FRect rect = { position.x - half_length + (size + padding) * i, position.y - size * .5f, size, size };
+			SDL_RenderTexture(m_game.m_window->GetRenderer(), texture, nullptr, &rect);
+		}
+	}
+	else {
+		for (size_t i = 0; i < m_health_point; i++)
+		{
+			SDL_FRect rect = { position.x - (size + padding) * (i + 1), position.y - size * .5f, size, size };
+			SDL_RenderTexture(m_game.m_window->GetRenderer(), texture, nullptr, &rect);
+		}
+	}
+
+}
+
 #pragma region StateMachine
 
 void PlayState::SetModeStart() {
@@ -127,6 +153,8 @@ void PlayState::UpdateStart() {
 		style);
 
 	RenderScore({ m_game.m_window->GetWidth() * .5f , 300}, 50);
+	RenderHealthPoint({ m_game.m_window->GetWidth() * .5f, 600.0f}, 90, 10, true);
+
 
 	m_coroutines->Update(m_game.m_input_handler->GetDeltaTime());
 }
@@ -152,6 +180,7 @@ void PlayState::UpdateWaitUntilInput() {
 	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
 		entity->Render(m_game.m_window);
 
+	RenderHealthPoint({ m_game.m_window->GetWidth() - GetSideMargin(), GetTopMargin() * .5f }, 30, 10);
 	RenderScore({ 150 , GetTopMargin() * .5f }, 30);
 
 	TextStyle style;
@@ -184,6 +213,7 @@ void PlayState::UpdatePlay() {
 		entity->Render(m_game.m_window);
 
 	RenderScore({150 , GetTopMargin() * .5f }, 30);
+	RenderHealthPoint({ m_game.m_window->GetWidth() - GetSideMargin(), GetTopMargin() * .5f}, 30, 10);
 
 	DestroyQueue();
 
@@ -200,6 +230,7 @@ void PlayState::SetModeLose() {
 		elapsed += delta_time;
 
 		if (elapsed >= duration) {
+			m_health_point--;
 			RestartLevel();
 			return true;
 		}
