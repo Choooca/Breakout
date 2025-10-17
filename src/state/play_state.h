@@ -18,10 +18,8 @@ public :
 
 	void Update() override;
 	
-	inline float GetSideMargin() const { return m_side_margin; };
-	inline float GetTopMargin() const { return m_top_margin; };
-	inline int GetNXBrick() const { return m_n_brick_x; };
-	inline int GetNYBrick() const { return m_n_brick_y; };
+	inline Vector2 GetMargin() const { return m_margin; };
+	inline Vector2 GetNBrick() const { return m_n_bricks; };
 
 	std::unique_ptr<EntityFactory> m_entity_factory;
 	std::unique_ptr<PhysicHandler> m_physics_handler;
@@ -36,11 +34,9 @@ private:
 
 	int m_total_score;
 	int m_current_level_score;
-	int m_n_brick_x;
-	int m_n_brick_y;
 	int m_current_level_index;
-	float m_side_margin;
-	float m_top_margin;
+	Vector2 m_n_bricks;
+	Vector2 m_margin;
 
 	void RenderScore(Vector2 position, float size, size_t n_zero = 7);
 	void RenderHealthPoint(Vector2 position, float size, float padding = 10.0f, bool is_center = false);

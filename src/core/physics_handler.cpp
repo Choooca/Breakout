@@ -31,10 +31,10 @@ void PhysicHandler::ProcessPhysic(std::vector<std::weak_ptr<MovingEntity>> move_
 
 
 			Collision collision = SweepMovingAABB(
-				{ entity_a->GetXPos(), entity_a->GetYPos(), entity_a->GetWidth() * .5f, entity_a->GetHeight() * .5f },
-				{ entity_a->GetXVelocity(), entity_a->GetYVelocity() },
-				{ entity_b->GetXPos(), entity_b->GetYPos(),entity_b->GetWidth() * .5f,  entity_b->GetHeight() * .5f },
-				{ entity_b->GetXVelocity(), entity_b->GetYVelocity() }
+				{ entity_a->GetPosition().x, entity_a->GetPosition().y, entity_a->GetSize().x * .5f, entity_a->GetSize().y * .5f },
+				{ entity_a->GetVelocity().x, entity_a->GetVelocity().y },
+				{ entity_b->GetPosition().x, entity_b->GetPosition().y,entity_b->GetSize().x * .5f,  entity_b->GetSize().y * .5f },
+				{ entity_b->GetVelocity().x, entity_b->GetVelocity().y }
 			);
 
 			if (collision.hit) {
@@ -64,9 +64,9 @@ void PhysicHandler::ProcessPhysic(std::vector<std::weak_ptr<MovingEntity>> move_
 			if (std::dynamic_pointer_cast<MovingEntity>(entity)) continue;
 
 			Collision collision = SweepMovingAABB(
-				{ move_entity->GetXPos(), move_entity->GetYPos(), move_entity->GetWidth() * .5f, move_entity->GetHeight() * .5f },
-				{ move_entity->GetXVelocity(), move_entity->GetYVelocity() },
-				{ entity->GetXPos(), entity->GetYPos(),entity->GetWidth() * .5f,  entity->GetHeight() * .5f },
+				{ move_entity->GetPosition().x, move_entity->GetPosition().y, move_entity->GetSize().x * .5f, move_entity->GetSize().y * .5f },
+				{ move_entity->GetVelocity().x, move_entity->GetVelocity().y },
+				{ entity->GetPosition().x, entity->GetPosition().y,entity->GetSize().x * .5f,  entity->GetSize().y * .5f },
 				{0, 0}
 			);
 
@@ -84,8 +84,8 @@ void PhysicHandler::ProcessPhysic(std::vector<std::weak_ptr<MovingEntity>> move_
 		std::shared_ptr<MovingEntity> move_entity = move_entity_weak.lock();
 
 		move_entity->SetPosition(
-			move_entity->GetXPos() + move_entity->GetXVelocity(),
-			move_entity->GetYPos() + move_entity->GetYVelocity()
+			{ move_entity->GetPosition().x + move_entity->GetVelocity().x,
+			move_entity->GetPosition().y + move_entity->GetVelocity().y }
 		);
 	}
 }

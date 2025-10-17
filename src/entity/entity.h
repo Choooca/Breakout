@@ -22,18 +22,16 @@ enum EntityFlags : uint32_t {
 
 class Entity {
 public:
-	Entity(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, SDL_Texture* texture);
+	Entity(Vector2 position, Vector2 size, SDL_Color color, std::string name, SDL_Texture* texture);
 	~Entity() = default;
 
-	void SetColor(SDL_Color color);
-	void SetPosition(float x, float y);
-	void SetSize(float width, float height);
-	void SetTexture(SDL_Texture* texture);
+	void SetColor(SDL_Color color) { m_color = color; };
+	void SetPosition(Vector2 position) { m_position = position; };
+	void SetSize(Vector2 size) { m_size = size; };
+	void SetTexture(SDL_Texture* texture) { m_texture = texture; };
 
-	inline float GetXPos() const { return m_position_x; };
-	inline float GetYPos() const { return m_position_y; };
-	inline float GetWidth() const { return m_width; };
-	inline float GetHeight() const { return m_height; };
+	inline Vector2 GetPosition() const { return m_position; };
+	inline Vector2 GetSize() const { return m_size; };
 
 	inline bool GetUpdateEnable() { return m_update_enable; }
 	virtual void SetUpdateEnable(bool is_enable);
@@ -61,14 +59,11 @@ protected:
 	
 	bool m_update_enable;
 
-	float m_position_x;
-	float m_position_y;
+	Vector2 m_position;
 
-	float m_render_offset_x;
-	float m_render_offset_y;
+	Vector2 m_render_offset;
 
-	float m_width;
-	float m_height;
+	Vector2 m_size;
 
 	uint32_t m_flag;
 	uint32_t m_collide_mask;

@@ -30,8 +30,8 @@ ParallaxBackground::ParallaxBackground(
 	m_followed_entity(followed_entity),
 	m_move_factor(move_factor) {
 
-	m_base_position_x = followed_entity.lock()->GetXPos();
-	m_base_position_y = followed_entity.lock()->GetYPos();
+	m_base_position_x = followed_entity.lock()->GetPosition().x;
+	m_base_position_y = followed_entity.lock()->GetPosition().y;
 
 }
 

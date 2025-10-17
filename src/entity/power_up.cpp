@@ -6,8 +6,8 @@
 #include <cstdlib>
 #include <core/game_event.h>
 
-PowerUp::PowerUp(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, float speed, SDL_Texture* texture)
-	: MovingEntity(position_x, position_y, width, height, color, name, speed, texture) {
+PowerUp::PowerUp(Vector2 position, Vector2 size, SDL_Color color, std::string name, float speed, SDL_Texture* texture)
+	: MovingEntity(position , size, color, name, speed, texture) {
 	m_flag = EntityFlags::FLAG_POWERUP;
 	m_collide_mask = EntityFlags::FLAG_PADDLE;
 }
@@ -15,7 +15,7 @@ PowerUp::PowerUp(float position_x, float position_y, float width, float height, 
 void PowerUp::Update(const std::unique_ptr<InputHandler>& input_handler, int window_height) {
 	Entity::Update(input_handler, window_height);
 
-	m_velocity_y = input_handler->GetDeltaTime() * m_speed;
+	m_velocity.y = input_handler->GetDeltaTime() * m_speed;
 }
 
 void PowerUp::OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity) {

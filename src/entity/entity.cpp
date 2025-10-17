@@ -5,18 +5,15 @@
 #include <iostream>
 #include <core/input_handler.h>
 
-Entity::Entity(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, SDL_Texture* texture)
-	: m_position_x(position_x),
-	  m_position_y(position_y),
-	  m_width(width),
-	  m_height(height),
+Entity::Entity(Vector2 position, Vector2 size, SDL_Color color, std::string name, SDL_Texture* texture)
+	: m_position(m_position),
+	  m_size(size),
 	  m_color(color),
 	  m_should_be_free(false),
 	  m_name(name),
 	  m_texture(texture),
 	  m_colliding(true),
-	  m_render_offset_x(0),
-	  m_render_offset_y(0),
+	  m_render_offset(0),
 	  m_update_enable(true){
 	m_coroutines = std::make_unique<CoroutineManager>();
 }
@@ -31,40 +28,22 @@ void Entity::UpdateCoroutine(const std::unique_ptr<InputHandler>& input_handler)
 	m_coroutines->Update(input_handler->GetDeltaTime());
 }
 
-void Entity::SetColor(SDL_Color color) {
-	m_color = color;
-}
-
-void Entity::SetPosition(float x, float y) {
-	m_position_x = x;
-	m_position_y = y;
-}
-
-void Entity::SetSize(float width, float height) {
-	m_width = width;
-	m_height = height;
-}
-
-void Entity::SetTexture(SDL_Texture* texture) {
-	m_texture = texture;
-}
-
 void Entity::Render(const std::unique_ptr<Window>& window) {
 	Vector2 position = {
-		m_position_x - m_width * .5f + m_render_offset_x,
-		m_position_y - m_height * .5f + m_render_offset_y
+		m_position.x - m_size.x * .5f + m_render_offset.x,
+		m_position.y - m_size.y * .5f + m_render_offset.y
 	};
 
 	if (!m_texture) {
 		SDL_SetRenderDrawColor(window->GetRenderer(), m_color.r, m_color.g, m_color.b, m_color.a);
-		SDL_FRect paddle_rect = { position.x, position.y, m_width, m_height };
+		SDL_FRect paddle_rect = { position.x, position.y, m_size.x, m_size.y };
 		SDL_RenderFillRect(window->GetRenderer(), &paddle_rect);
 		return;
 	}
 	
 	SDL_SetTextureAlphaMod(m_texture, m_color.a);
 	SDL_SetTextureColorMod(m_texture, m_color.r, m_color.g, m_color.b);
-	SDL_FRect rect = { position.x, position.y, m_width, m_height };
+	SDL_FRect rect = { position.x, position.y, m_size.x, m_size.y };
 	SDL_RenderTexture(window->GetRenderer(), m_texture, nullptr, &rect);
 }
 

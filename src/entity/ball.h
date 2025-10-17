@@ -8,7 +8,7 @@ struct Vector2;
 
 class Ball : public MovingEntity {
 public:
-	Ball(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, float speed, SDL_Texture* texture);
+	Ball(Vector2 position, Vector2 size, SDL_Color color, std::string name, float speed, SDL_Texture* texture);
 
 	void Update(const std::unique_ptr<InputHandler>& input_handler, int window_height) override;
 	void OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity) override;

@@ -5,10 +5,9 @@
 class MovingEntity : public Entity {
 public:
 
-	MovingEntity(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, float speed, SDL_Texture* texture);
+	MovingEntity(Vector2 position, Vector2 size, SDL_Color color, std::string name, float speed, SDL_Texture* texture);
 
-	inline float GetXVelocity() { return m_velocity_x; };
-	inline float GetYVelocity() { return m_velocity_y; };
+	inline Vector2 GetVelocity() { return m_velocity; };
 
 	void OnHit(Hit hit_result, std::shared_ptr<Entity> other_entity) override;
 
@@ -17,5 +16,6 @@ public:
 protected:
 
 	float m_speed;
-	float m_velocity_x, m_velocity_y;
+	Vector2 m_velocity;
+	
 };

@@ -20,7 +20,7 @@ class Brick;
 class EntityFactory {
 public:
 	std::shared_ptr<Entity> CreateEntity(ENTITIES entity_type);
-	std::shared_ptr<Entity> CreateEntity(ENTITIES entity_type, float position_x, float position_y, float width, float height, SDL_Color color, SDL_Texture* texture);
+	std::shared_ptr<Entity> CreateEntity(ENTITIES entity_type, Vector2 position, Vector2 size, SDL_Color color, SDL_Texture* texture);
 
 	std::vector<std::shared_ptr<Entity>> m_all_entities;
 	std::vector<std::weak_ptr<MovingEntity>> m_moving_entities;

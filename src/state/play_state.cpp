@@ -14,10 +14,8 @@
 
 PlayState::PlayState(Game& game) :
 	GameState(game),
-	m_side_margin(54),
-	m_top_margin(50),
-	m_n_brick_x(13),
-	m_n_brick_y(13),
+	m_margin({ 54,50 }),
+	m_n_bricks({ 13, 13 }),
 	m_current_level_index(0),
 	m_current_level_score(0),
 	m_total_score(0)
@@ -47,8 +45,8 @@ void PlayState::InitListener() {
 
 			m_entity_factory->CreateEntity(ENTITY_BALL);
 			std::shared_ptr<Ball> ball = m_entity_factory->m_balls.back().lock();
-			ball->SetPosition(spawn_ball->GetXPos(), spawn_ball->GetYPos());
-			ball->SetSize(14, 14);
+			ball->SetPosition({ spawn_ball->GetPosition().x, spawn_ball->GetPosition().y });
+			ball->SetSize({ 14, 14 });
 			ball->SetRandomDir();
 			ball->SetTexture(m_game.m_ressource_loader->GetTexture("objects/ball.png"));
 		}
@@ -68,10 +66,8 @@ void PlayState::InitListener() {
 			if (rand() % 6 == 0) {
 				m_entity_factory->CreateEntity(
 					ENTITY_POWERUP,
-					position.x,
-					position.y,
-					25,
-					25,
+					position,
+					{25,25},
 					{ 255, 255, 255, 255 },
 					m_game.m_ressource_loader->GetTexture("objects/PowerUp.png")
 				);
@@ -163,13 +159,13 @@ void PlayState::UpdateStart() {
 void PlayState::SetModeWaitUntilInput() {
 	m_entity_factory->CreateEntity(ENTITIES::ENTITY_PADDLE);
 	m_entity_factory->m_all_entities.back()->SetColor({ 255, 100, 255, 255 });
-	m_entity_factory->m_all_entities.back()->SetPosition(m_game.m_window->GetWidth() * .5f, 800);
-	m_entity_factory->m_all_entities.back()->SetSize(100, 20);
+	m_entity_factory->m_all_entities.back()->SetPosition({ m_game.m_window->GetWidth() * .5f, 800 });
+	m_entity_factory->m_all_entities.back()->SetSize({ 100, 20 });
 	m_entity_factory->m_all_entities.back()->SetTexture(m_game.m_ressource_loader->GetTexture("objects/paddle.png"));
 
 	m_entity_factory->CreateEntity(ENTITIES::ENTITY_BALL);
-	m_entity_factory->m_all_entities.back()->SetPosition(m_game.m_window->GetWidth() * .5f, 700);
-	m_entity_factory->m_all_entities.back()->SetSize(14, 14);
+	m_entity_factory->m_all_entities.back()->SetPosition({ m_game.m_window->GetWidth() * .5f, 700 });
+	m_entity_factory->m_all_entities.back()->SetSize({ 14, 14 });
 	m_entity_factory->m_all_entities.back()->SetTexture(m_game.m_ressource_loader->GetTexture("objects/ball.png"));
 
 	m_current_level->GenerateLevel(m_game, *this, m_entity_factory);
@@ -181,8 +177,8 @@ void PlayState::UpdateWaitUntilInput() {
 	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
 		entity->Render(m_game.m_window);
 
-	RenderHealthPoint({ m_game.m_window->GetWidth() - GetSideMargin(), GetTopMargin() * .5f }, 30, 10);
-	RenderScore({ 150 , GetTopMargin() * .5f }, 30);
+	RenderHealthPoint({ m_game.m_window->GetWidth() - GetMargin().x, GetMargin().y * .5f }, 30, 10);
+	RenderScore({ 150 , GetMargin().y * .5f }, 30);
 
 	TextStyle style;
 	style.font_size = 60;
@@ -213,8 +209,8 @@ void PlayState::UpdatePlay() {
 	for (const std::shared_ptr<Entity>& entity : m_entity_factory->m_all_entities)
 		entity->Render(m_game.m_window);
 
-	RenderScore({150 , GetTopMargin() * .5f }, 30);
-	RenderHealthPoint({ m_game.m_window->GetWidth() - GetSideMargin(), GetTopMargin() * .5f}, 30, 10);
+	RenderScore({150 , GetMargin().y * .5f }, 30);
+	RenderHealthPoint({ m_game.m_window->GetWidth() - GetMargin().x, GetMargin().y * .5f}, 30, 10);
 
 	DestroyQueue();
 

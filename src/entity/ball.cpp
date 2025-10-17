@@ -10,8 +10,8 @@
 #include <state/play_state.h>
 #include <cstdlib>
 
-Ball::Ball(float position_x, float position_y, float width, float height, SDL_Color color, std::string name, float speed, SDL_Texture* texture)
-	: MovingEntity(position_x, position_y, width, height, color, name, speed, texture),
+Ball::Ball(Vector2 position, Vector2 size, SDL_Color color, std::string name, float speed, SDL_Texture* texture)
+	: MovingEntity(position, size, color, name, speed, texture),
 	  m_dir_x(0),
 	  m_dir_y(0) {
 
@@ -34,7 +34,7 @@ void Ball::UpdateTrail() {
 				for (int i = trail_pos.size() - 1; i > 0; i--) {
 					trail_pos[i] = trail_pos[i - 1];
 				}
-				trail_pos[0] = Vector2(m_position_x, m_position_y);
+				trail_pos[0] = Vector2(m_position.x, m_position.y);
 			}
 		}
 		return false;
@@ -49,15 +49,15 @@ void Ball::Update(const std::unique_ptr<InputHandler>& input_handler, int window
 
 	if (std::abs(m_dir_x) < .01f) m_dir_x = .01f;
 
-	if (m_position_y >= window_height - m_height * .5f)
+	if (m_position.y >= window_height - m_size.y * .5f)
 	{
 		m_should_be_free = true;
 	}
 
-	m_velocity_x = m_velocity_y = 0;
+	m_velocity = { 0 };
 
-	m_velocity_x = input_handler->GetDeltaTime() * m_speed * m_dir_x;
-	m_velocity_y = input_handler->GetDeltaTime() * m_speed * m_dir_y;
+	m_velocity.x = input_handler->GetDeltaTime() * m_speed * m_dir_x;
+	m_velocity.y = input_handler->GetDeltaTime() * m_speed * m_dir_y;
 }
 
 void Ball::Render(const std::unique_ptr<Window>& window) {
@@ -67,19 +67,18 @@ void Ball::Render(const std::unique_ptr<Window>& window) {
 
 		float factor = std::lerp(1.0f, 0.0f, (i + 1.0f) / (trail_pos.size() + 1));
 		float alpha = m_color.a * factor;
-		float width = m_width * factor;
-		float height = m_height * factor;
+		Vector2 size = { m_size.x * factor, m_size.y * factor };
 
 		if (!m_texture) {
 			SDL_SetRenderDrawColor(window->GetRenderer(), m_color.r, m_color.g, m_color.b, m_color.a);
-			SDL_FRect paddle_rect = { trail_pos[i].x - width * .5f,  trail_pos[i].y - height * .5f, width, height };
+			SDL_FRect paddle_rect = { trail_pos[i].x - size.x * .5f,  trail_pos[i].y - size.y * .5f, size.x, size.y };
 			SDL_RenderFillRect(window->GetRenderer(), &paddle_rect);
 			return;
 		}
 
 		SDL_SetTextureAlphaMod(m_texture, alpha);
 		SDL_SetTextureColorMod(m_texture, m_color.r, m_color.g, m_color.b);
-		SDL_FRect rect = { trail_pos[i].x - width * .5f + m_render_offset_x, trail_pos[i].y - height * .5f + m_render_offset_y, width, height };
+		SDL_FRect rect = { trail_pos[i].x - size.x * .5f + m_render_offset.x, trail_pos[i].y - size.y * .5f + m_render_offset.y, size.x, size.y};
 		SDL_RenderTexture(window->GetRenderer(), m_texture, nullptr, &rect);
 
 	}
