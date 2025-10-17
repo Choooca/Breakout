@@ -11,6 +11,7 @@
 #include <iostream>
 #include <core/game_event.h>
 #include <state/game_over_state.h>
+#include <state/win_screen_state.h>
 
 PlayState::PlayState(Game& game) :
 	GameState(game),
@@ -39,9 +40,12 @@ void PlayState::InitListener() {
 
 	GameEvents::Get().OnPowerUpCollected.Subscribe(
 		[this]() {
+			if (m_entity_factory->m_balls.size() == 0) return;
 			std::shared_ptr<Ball> spawn_ball = m_entity_factory->m_balls[rand() % m_entity_factory->m_balls.size()].lock();
 
 			if (!spawn_ball) return;
+
+			m_game.m_sound_handler->StartSound("Powerup.wav");
 
 			m_entity_factory->CreateEntity(ENTITY_BALL);
 			std::shared_ptr<Ball> ball = m_entity_factory->m_balls.back().lock();
@@ -52,9 +56,16 @@ void PlayState::InitListener() {
 		}
 	);
 
+	GameEvents::Get().OnPaddleHit.Subscribe(
+		[this]() {
+			m_game.m_sound_handler->StartSound("Paddle.wav");
+		}
+	);
+
 	GameEvents::Get().OnHitBrick.Subscribe(
 		[this](int score) {
 			m_current_level_score += score;
+			m_game.m_sound_handler->StartSound("Bump.wav");
 		}
 	);
 
@@ -63,7 +74,9 @@ void PlayState::InitListener() {
 
 			m_current_level_score += score;
 
-			if (rand() % 6 == 0) {
+			m_game.m_sound_handler->StartSound("Crunch.wav");
+
+			if (rand() % 3 == 0) {
 				m_entity_factory->CreateEntity(
 					ENTITY_POWERUP,
 					position,
@@ -160,7 +173,7 @@ void PlayState::SetModeWaitUntilInput() {
 	m_entity_factory->CreateEntity(ENTITIES::ENTITY_PADDLE);
 	m_entity_factory->m_all_entities.back()->SetColor({ 255, 100, 255, 255 });
 	m_entity_factory->m_all_entities.back()->SetPosition({ m_game.m_window->GetWidth() * .5f, 800 });
-	m_entity_factory->m_all_entities.back()->SetSize({ 100, 20 });
+	m_entity_factory->m_all_entities.back()->SetSize({ 150, 20 });
 	m_entity_factory->m_all_entities.back()->SetTexture(m_game.m_ressource_loader->GetTexture("objects/paddle.png"));
 
 	m_entity_factory->CreateEntity(ENTITIES::ENTITY_BALL);
@@ -230,7 +243,10 @@ void PlayState::SetModeLose() {
 			m_health_point--;
 
 			if (m_health_point > 0) RestartLevel();
-			else m_game.ChangeState(std::make_unique<GameOverState>(m_game, m_total_score));
+			else {
+				m_game.ChangeState(std::make_unique<GameOverState>(m_game, m_total_score));
+				m_game.m_score_handler->UpdateHighScore(m_total_score);
+			}
 			return true;
 		}
 
@@ -344,5 +360,9 @@ void PlayState::RestartLevel() {
 void PlayState::NextLevel() {
 	m_entity_factory->Clear();
 	m_current_level_index++;
-	SetModeStart();
+	if (m_current_level_index >= m_current_level->GetLevelCount()) {
+		m_game.ChangeState(std::make_unique<WinScreenState>(m_game, m_total_score));
+		m_game.m_score_handler->UpdateHighScore(m_total_score);
+	}
+	else SetModeStart();
 }

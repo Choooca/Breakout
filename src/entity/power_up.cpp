@@ -8,6 +8,7 @@
 
 PowerUp::PowerUp(Vector2 position, Vector2 size, SDL_Color color, std::string name, float speed, SDL_Texture* texture)
 	: MovingEntity(position , size, color, name, speed, texture) {
+	m_position = position;
 	m_flag = EntityFlags::FLAG_POWERUP;
 	m_collide_mask = EntityFlags::FLAG_PADDLE;
 }

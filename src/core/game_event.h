@@ -33,6 +33,7 @@ public:
 	Event<int, Vector2> OnBrickDestroyed;
 	Event<> OnPowerUpCollected;
 	Event<int> OnHitBrick;
+	Event<> OnPaddleHit;
 
 	static GameEvents& Get() {
 		static GameEvents instance;
@@ -46,6 +47,7 @@ public:
 		OnBrickDestroyed.Clear();
 		OnPowerUpCollected.Clear();
 		OnHitBrick.Clear();
+		OnPaddleHit.Clear();
 	}
 
 private:

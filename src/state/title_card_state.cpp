@@ -11,6 +11,14 @@ TitleCardState::TitleCardState(Game& game) : MenuState(game) {
 		Vector2{ m_game.m_window->GetWidth() * .5f, 500.0f},
 		Vector2{300.0f, 120.0f})
 	);
+
+	m_buttons.push_back(std::make_unique<UIButton>(
+		game.m_ressource_loader->GetTexture("UI/Button.png"),
+		[&game]() { game.m_input_handler->m_quit = true; },
+		"Quit",
+		Vector2{ m_game.m_window->GetWidth() * .5f, 600.0f },
+		Vector2{ 150.0f, 60.0f })
+	);
 }
 
 void TitleCardState::Update() {
@@ -20,11 +28,4 @@ void TitleCardState::Update() {
 	TextStyle style;
 	style.font_size = 100;
 	m_game.m_text_renderer->RenderText("Arkanoid", m_game.m_window->GetWidth() * .5f, 300.0f, style);
-
-	Vector2 cursor_pos;
-	int mouse_state = SDL_GetMouseState(&cursor_pos.x, &cursor_pos.y);
-
-	SDL_Texture* texture = m_game.m_ressource_loader->GetTexture("UI/cursor.png");
-	SDL_FRect rect = { cursor_pos.x,cursor_pos.y , 50, 50 };
-	SDL_RenderTexture(m_game.m_window->GetRenderer(), texture, nullptr, &rect);
 }

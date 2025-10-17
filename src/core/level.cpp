@@ -4,14 +4,14 @@
 #include <format>
 #include <state/play_state.h>
 
-Level::Level(int level_index) : m_levels_paths({"level1.txt", "level2.txt"}) {
+Level::Level(int level_index) : m_levels_paths({"level1.txt", "level2.txt", "level3.txt"}) {
 	m_level_string = LoadLevelFile(m_levels_paths[level_index]);
 }
 	
 
 void Level::GenerateLevel(const Game& game, const PlayState& state, const std::unique_ptr<EntityFactory>& entity_factory) {
 	float x_step = (game.m_window->GetWidth() - state.GetMargin().x * 2.0f) / state.GetNBrick().x;
-	float y_step = 400.0f / state.GetNBrick().y;
+	float y_step = 500.0f / state.GetNBrick().y;
 
 	int n_loop = static_cast<int>(state.GetNBrick().x * state.GetNBrick().y);
 	for (size_t i = 0; i < n_loop; i++)

@@ -11,11 +11,15 @@ Game::Game() {
 	m_input_handler = std::make_unique<InputHandler>(m_window->GetWindow());
 	m_ressource_loader = std::make_unique<RessourceLoader>(m_window->GetRenderer());
 	m_text_renderer = std::make_unique<TextRenderer>(m_window);
+	m_score_handler = std::make_unique<ScoreHandler>();
+	m_sound_handler = std::make_unique<SoundHandler>();
 }
 
 void Game::Run() {
 
 	m_current_state = std::make_unique<TitleCardState>(*this);
+
+	m_sound_handler->StartSound("ThreeRedHeartsCandy.wav", true);
 
 	while (!m_input_handler->m_quit) {
 		m_input_handler->Update();
@@ -25,6 +29,8 @@ void Game::Run() {
 		m_current_state->Update();
 		
 		m_window->RenderEnd();
+
+		m_sound_handler->Update();
 
 		if(m_pending_state) m_current_state = std::move(m_pending_state);
 	}

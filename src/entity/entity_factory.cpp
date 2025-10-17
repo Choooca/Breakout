@@ -33,7 +33,7 @@ std::shared_ptr<Entity> EntityFactory::CreateEntity(ENTITIES entity_type, Vector
 		break;
 	}
 	case ENTITY_HARD_BRICK : {
-		std::shared_ptr<Brick> brick = std::make_shared<Brick>(position, size, color, "HardBrick", texture, false, 6, 300);
+		std::shared_ptr<Brick> brick = std::make_shared<Brick>(position, size, color, "HardBrick", texture, false, 4, 300);
 			m_all_entities.push_back(brick);
 			m_bricks.push_back(brick);
 			break;

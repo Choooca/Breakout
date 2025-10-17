@@ -21,20 +21,16 @@ FetchContent_Declare(
 )
 
 FetchContent_Declare(
-	miniaudio
-	GIT_REPOSITORY https://github.com/mackron/miniaudio.git
-	GIT_TAG 0.11.23
-)
-
-FetchContent_Declare(
 	SDL3_ttf
 	GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
 	GIT_TAG release-3.2.2
 )
 
-FetchContent_MakeAvailable(SDL3 SDL3_ttf miniaudio)
+FetchContent_MakeAvailable(SDL3 SDL3_ttf)
 
 add_library(stb INTERFACE)
 target_include_directories(stb INTERFACE ${CMAKE_SOURCE_DIR}/external/stb)
+
+include_directories(${CMAKE_SOURCE_DIR}/external/miniaudio)
 
 add_subdirectory(src)

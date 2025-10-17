@@ -15,11 +15,8 @@ void CoroutineManager::Update(float delta_time) {
 		m_pending_coroutines.clear();
 	}
 
-	m_coroutines.erase(
-		std::remove_if(m_coroutines.begin(), m_coroutines.end(),
-			[delta_time](std::function<bool(float)>& coroutine) {
-				return coroutine(delta_time);
-			}),
-		m_coroutines.end()
-		);
+	std::erase_if(m_coroutines,
+		[delta_time](std::function<bool(float)>& coroutine) {
+			return coroutine(delta_time);
+		});
 }

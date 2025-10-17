@@ -1,22 +1,15 @@
 #pragma once
-
-struct Vector2;
-class Game;
-
+#include <string>
 
 class ScoreHandler {
 public:
 
-	ScoreHandler(Game &game);
+	ScoreHandler();
 
-	void AddScore(int score);
-	void RenderScore(Vector2 position, float size);
+	int UpdateHighScore(int score);
+	int GetHighScore();
 
 private:
+	std::string m_file_path;
 
-	Game& m_game;
-
-	int m_current_score;
-
-	size_t m_nzero;
 };

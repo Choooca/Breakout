@@ -15,6 +15,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 	ASSETS_PATH="${CMAKE_SOURCE_DIR}/assets"
 	LEVELS_PATH="${CMAKE_SOURCE_DIR}/assets/levels"
 	FONTS_PATH="${CMAKE_SOURCE_DIR}/assets/fonts"
+	SOUNDS_PATH="${CMAKE_SOURCE_DIR}/assets/sounds"
 	TEXTURES_PATH="${CMAKE_SOURCE_DIR}/assets/textures")
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)

@@ -1,26 +1,49 @@
 #include "score_handler.h"
-#include <utility/math_utils.h>
-#include <graphics/text_renderer.h>
-#include <core/game.h>
-#include <algorithm>
+#include <iostream>
+#include <fstream>
+#include <format>
 
-ScoreHandler::ScoreHandler(Game& game) : m_game(game), m_current_score(0), m_nzero(6) {}
-
-void ScoreHandler::AddScore(int score) {
-	m_current_score += score;
+ScoreHandler::ScoreHandler() {
+	m_file_path = std::string(ASSETS_PATH) + "/" "data/high_score.txt";
 }
 
-void ScoreHandler::RenderScore(Vector2 position, float size) {
-	TextStyle style;
-	style.font_size = size;
 
-	std::string score_string = std::to_string(m_current_score);
-	score_string = std::string(6 - std::min(m_nzero, score_string.length()), '0') + score_string;
-	std::string text = "Score : " + score_string;
+int ScoreHandler::UpdateHighScore(int score) {
+	int current_high_score = GetHighScore();
 
-	m_game.m_text_renderer->RenderText(
-		text,
-		position.x,
-		position.y,
-		style);
+	if (score <= current_high_score)
+		return current_high_score;
+
+	std::ofstream file(m_file_path);
+
+	if (!file) {
+		fprintf(stderr, "Failed to load file : ", m_file_path);
+		return 0;
+	}
+
+	file << score;
+	file.close();
+
+	return score;
+}
+
+int ScoreHandler::GetHighScore() {
+
+	std::ifstream file(m_file_path);
+
+	if (!file) {
+		std::ofstream create_file(m_file_path);
+		if (create_file) {
+			create_file << 0;
+			create_file.close();
+		} 
+		else fprintf(stderr, "Failed to create file : %s", m_file_path);
+		return 0;
+	}
+
+	int high_score = 0;
+	file >> high_score;
+	file.close();
+
+	return high_score;
 }

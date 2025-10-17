@@ -26,6 +26,9 @@ private:
 
 	float m_move_scale_factor;
 
+	float m_time_between_sound = .2f;
+	float m_count = .0f;
+
 	void Input(const std::unique_ptr<InputHandler>& input_handler);
 
 	void HitAnim(float duration);

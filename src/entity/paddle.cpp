@@ -7,6 +7,7 @@
 #include <graphics/window.h>
 #include <state/play_state.h>
 #include <vector>
+#include <core/game_event.h>
 
 Paddle::Paddle(Vector2 position, Vector2 size, SDL_Color color, std::string name, float speed, SDL_Texture* texture)
 	: MovingEntity(position, size, color, name, speed, texture),
@@ -20,6 +21,7 @@ Paddle::Paddle(Vector2 position, Vector2 size, SDL_Color color, std::string name
 
 void Paddle::Update(const std::unique_ptr<InputHandler>& input_handler, int window_height) {
 	Entity::Update(input_handler, window_height);
+	if(m_count > 0) m_count -= input_handler->GetDeltaTime();
 	Input(input_handler);
 }
 
@@ -73,8 +75,13 @@ void Paddle::Input(const std::unique_ptr<InputHandler>& input_handler) {
 			return false;
 		}
 		else {
-			ball->SetUpdateEnable(true);
+			 ball->SetUpdateEnable(true);
 			HitAnim(.2f);
+			if (m_count <= 0.0f)
+			{
+				m_count = m_time_between_sound;
+				GameEvents::Get().OnPaddleHit.Invoke();
+			}
 			return true;
 		}
 		});
@@ -87,7 +94,7 @@ void Paddle::Render(const std::unique_ptr<Window>& window) {
 	if (m_velocity.x != 0)
 	{
 		m_size.x = base_size.x * (1 + m_move_scale_factor);
-		m_size.y = base_size.y * (1 + m_move_scale_factor);
+		m_size.y = base_size.y * (1 - m_move_scale_factor);
 	}
 
 	Entity::Render(window);
